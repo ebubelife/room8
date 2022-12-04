@@ -7,11 +7,11 @@ void showToast(String label) {
     "",
     label,
     snackPosition: SnackPosition.BOTTOM,
-    backgroundColor: Color.fromARGB(255, 235, 6, 6).withOpacity(0.4),
+    backgroundColor: Color.fromARGB(255, 199, 199, 199).withOpacity(0.4),
     borderRadius: 16,
     isDismissible: true,
     margin: const EdgeInsets.all(20),
-    colorText: Color.fromARGB(255, 255, 255, 255),
+    colorText: Color.fromARGB(255, 48, 48, 48),
     snackStyle: SnackStyle.FLOATING,
     duration: const Duration(seconds: 4),
   );

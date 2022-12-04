@@ -47,12 +47,15 @@ class _UserPostState extends State<UserPost> {
     String? profile_img_url = user_data["profile_image_url"];
     List<dynamic> media_files = widget.data["media"];
     return Container(
-        margin: EdgeInsets.only(left: 20, right: 20, top: 5),
+        margin: EdgeInsets.only(top: 5, left: 3, right: 3),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(children: [
+                SizedBox(
+                  width: 10,
+                ),
                 ClipOval(
                     child: Container(
                   height: 40,
@@ -93,11 +96,13 @@ class _UserPostState extends State<UserPost> {
                       shape: BoxShape.circle),
                 )),
                 SizedBox(
-                  width: 10,
+                  width: 5,
                 ),
                 Expanded(
                     child: Container(
-                  margin: EdgeInsets.only(top: 15, right: 0),
+                  margin: EdgeInsets.only(
+                    top: 15,
+                  ),
                   width: double.maxFinite,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +199,7 @@ class _UserPostState extends State<UserPost> {
                                           decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color.fromARGB(
-                                                  255, 240, 72, 30)),
+                                                  255, 240, 131, 30)),
                                           child: Center(
                                             child: Icon(
                                               Icons.share,
@@ -226,8 +231,12 @@ class _UserPostState extends State<UserPost> {
               SizedBox(
                 height: 10,
               ),
-              HashTagDetector().convertHashtag(
-                  widget.data["content"].toString(), media_files, text_expand!),
+              Container(
+                  margin: EdgeInsets.only(left: 14, right: 14),
+                  child: HashTagDetector().convertHashtag(
+                      widget.data["content"].toString(),
+                      media_files,
+                      text_expand!)),
               (widget.data["content"].toString().split('').length > 60 &&
                           text_expand == false) ||
                       text_expand == null
@@ -238,9 +247,12 @@ class _UserPostState extends State<UserPost> {
                         });
                       },
                       //handle display of less and more buttons to show or hide more text content
-                      child: Text("More...",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.red)))
+                      child: Container(
+                          margin: EdgeInsets.only(left: 14, right: 14),
+                          child: Text("More...",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red))))
                   : widget.data["content"].toString().split('').length > 100 &&
                           text_expand == true
                       ? GestureDetector(
@@ -249,10 +261,12 @@ class _UserPostState extends State<UserPost> {
                               text_expand = !text_expand!;
                             });
                           },
-                          child: Text("Less...",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red)))
+                          child: Container(
+                              margin: EdgeInsets.only(left: 14, right: 14),
+                              child: Text("Less...",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red))))
                       : SizedBox(
                           width: 10,
                           height: 6,
@@ -402,33 +416,40 @@ class _UserPostState extends State<UserPost> {
 
               Row(
                 children: [
+                  SizedBox(
+                    width: 10,
+                  ),
                   Icon(
                     Icons.visibility,
-                    size: 18,
+                    size: 21,
                   ),
                   SizedBox(width: 3),
-                  Text(widget.data["views_count"]),
+                  Text(NumberFormat.compact()
+                      .format(int.parse(widget.data["views_count"]))),
                   SizedBox(width: 10),
                   GestureDetector(
                       onTap: () {
-                        Get.to(Comments(post: widget.data));
+                        Get.to(Comments(
+                          post: widget.data,
+                          isFollowed: false,
+                        ));
                       },
                       child: SvgPicture.asset(
-                        "assets/svg/ask.svg",
-                        height: 16,
-                        width: 16,
+                        "assets/svg/comment-svgrepo-com.svg",
+                        height: 21,
+                        width: 21,
                         fit: BoxFit.scaleDown,
-                        color: Color.fromARGB(255, 102, 102, 102),
+                        color: Color.fromARGB(255, 0, 0, 0),
                       )),
                   SizedBox(width: 3),
-                  Text("20k"),
+                  Text(widget.data["comments_count"]),
                   SizedBox(width: 10),
                   SvgPicture.asset(
-                    "assets/svg/hands.svg",
+                    "assets/svg/dollar-svgrepo-com.svg",
                     height: 21,
                     width: 21,
                     fit: BoxFit.scaleDown,
-                    color: Color.fromARGB(255, 102, 102, 102),
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
 
                   SizedBox(

@@ -71,7 +71,7 @@ class _sendOTPState extends State<sendOTP> {
                               ),
                               SizedBox(height: 100),
                               Text(
-                                "Enter your username or password here and we will send you a code to recover your account",
+                                "Enter your username or email here and we will send you a code to recover your account",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18.sp),
                               ),
@@ -101,12 +101,15 @@ class _sendOTPState extends State<sendOTP> {
                                                         .pop(),
                                                     showToast(
                                                         "An OTP has been sent to your email"),
-                                                       Get.offAll(EnterOTP_Password(
+                                                    Get.offAll(EnterOTP_Password(
                                                         title:
                                                             "Room8 Social - New Password"))
                                                   }
                                                 else
                                                   {
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop(),
                                                     showToast(value),
                                                   }
                                               });

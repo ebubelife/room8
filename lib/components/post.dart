@@ -71,12 +71,13 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                 GestureDetector(
                     onTap: (() {
                       Get.to(Profile(
-                        title: "Room8 - Profile",
-                        id: widget.data["creator_details"]["creator_id"],
-                        profile_img: widget.data["creator_details"]
-                            ["profile_image_url"],
-                        username: widget.data["creator_details"]["username"],
-                      ));
+                          title: "Room8 - Profile",
+                          id: widget.data["creator_details"]["creator_id"],
+                          profile_img: widget.data["creator_details"]
+                              ["profile_image_url"],
+                          username: widget.data["creator_details"]["username"],
+                          isFollowed: widget.data["creator_details"]
+                              ["isFollow"]));
                     }),
                     child: ClipOval(
                         child: Container(
@@ -170,11 +171,11 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                 }),
                                 child: SvgPicture.asset(
                                   "assets/svg/follow.svg",
-                                  height: 17,
-                                  width: 17,
+                                  height: 19,
+                                  width: 19,
                                   fit: BoxFit.scaleDown,
                                   color: isFollow == true
-                                      ? Color.fromARGB(255, 104, 15, 1)
+                                      ? Color.fromARGB(255, 248, 63, 7)
                                       : Color.fromARGB(255, 87, 86, 86),
                                 ),
                               ),
@@ -230,14 +231,13 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                 .then((value) => {
                                       if (value == 1)
                                         {
-                                          setState(() {
-                                            widget.onSonChanged(
-                                                int.parse(widget.data["id"]));
-                                            showToast(
-                                                "You've successfully deleted a post");
-                                            //  Get.back(canPop: mounted);
-                                            // Get.to(Landing(title: ""));
-                                          })
+                                          widget.onSonChanged(1),
+                                          showToast(
+                                              "You've successfully deleted a post"),
+                                          //  Get.back(canPop: mounted);
+                                          // Get.to(Landing(title: ""));
+
+                                          setState(() {})
                                         }
                                       else
                                         {
@@ -258,7 +258,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                     decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color:
-                                            Color.fromARGB(255, 240, 72, 30)),
+                                            Color.fromARGB(255, 240, 131, 30)),
                                     child: Center(
                                       child: Icon(
                                         Icons.share,
@@ -309,8 +309,8 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                     Container(
-                                        margin:
-                                            EdgeInsets.only(left: 5, right: 5),
+                                        margin: EdgeInsets.only(
+                                            left: 13, right: 13),
                                         child: HashTagDetector().convertHashtag(
                                             widget.data["content"].toString(),
                                             media_files,
@@ -326,7 +326,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                             },
                                             child: Container(
                                                 margin: EdgeInsets.only(
-                                                    left: 5, right: 5),
+                                                    left: 13, right: 13),
                                                 child: Text("More...",
                                                     style: TextStyle(
                                                         fontWeight:
@@ -342,7 +342,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                                 },
                                                 child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5, right: 5),
+                                                        left: 13, right: 13),
                                                     child: Text("Less...",
                                                         style: TextStyle(
                                                             fontWeight:
@@ -388,42 +388,39 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                               MediaQuery.of(context).size.width,
                                           margin: EdgeInsets.symmetric(
                                               horizontal: 1.0),
-                                          child: ImageFade(
-                                            image: NetworkImage(
+                                          child: CachedNetworkImage(
+                                            imageUrl:
                                                 "http://statup.ng/room8/room8/media/posts/images/" +
-                                                    i),
-                                            duration: const Duration(
-                                                milliseconds: 900),
-                                            syncDuration: const Duration(
-                                                milliseconds: 150),
-
-                                            alignment: Alignment.center,
-
-                                            fit: BoxFit.cover,
-                                            placeholder: Container(
-                                              color: Color(0xFFFFD390),
-                                              alignment: Alignment.center,
+                                                    i,
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                    colorFilter:
+                                                        ColorFilter.mode(
+                                                            Color.fromARGB(255,
+                                                                255, 255, 255),
+                                                            BlendMode
+                                                                .colorBurn)),
+                                              ),
                                             ),
-                                            loadingBuilder: (context, progress,
-                                                    chunkEvent) =>
-                                                Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                              value: progress,
-                                              strokeWidth: 0.2,
-                                              color: Colors.white,
-                                            )),
-
-                                            // displayed when an error occurs:
-                                            errorBuilder: (context, error) =>
+                                            placeholder: (context, url) =>
                                                 Container(
-                                              color: Color(0xFFFFD390),
-                                              alignment: Alignment.center,
-                                              child: const Icon(Icons.warning,
-                                                  color: Color.fromARGB(
-                                                      242, 255, 255, 255),
-                                                  size: 128.0),
-                                            ),
+                                                    height: 20,
+                                                    width: 20,
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                      strokeWidth: 1,
+                                                      color: Color.fromARGB(
+                                                          255, 240, 98, 3),
+                                                    ))),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
                                           ),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.only(
@@ -504,12 +501,13 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                           children: [
                             Icon(
                               Icons.visibility,
-                              size: 16,
+                              size: 21,
                             ),
                             SizedBox(
                               width: 3,
                             ),
-                            Text(widget.data["views_count"]),
+                            Text(NumberFormat.compact()
+                                .format(int.parse(widget.data["views_count"]))),
                             SizedBox(
                               width: 10,
                             ),
@@ -517,31 +515,45 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                               onTap: (() {
                                 Get.to(Comments(
                                   post: widget.data,
-                                  isFollowed: isFollow,
+                                  isFollowed: false,
                                 ));
                               }),
                               child: SvgPicture.asset(
-                                "assets/svg/ask.svg",
-                                height: 16,
-                                width: 16,
+                                "assets/svg/comment-svgrepo-com.svg",
+                                height: 21,
+                                width: 21,
                                 fit: BoxFit.scaleDown,
-                                color: Color.fromARGB(255, 102, 102, 102),
+                                color: Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
 
-                            SizedBox(
-                              width: 3,
-                            ),
-                            Text("80"),
+                            GestureDetector(
+                                onTap: (() {
+                                  Get.to(Comments(
+                                    post: widget.data,
+                                    isFollowed: isFollow,
+                                  ));
+                                }),
+                                child: SizedBox(
+                                  width: 3,
+                                )),
+                            GestureDetector(
+                                onTap: (() {
+                                  Get.to(Comments(
+                                    post: widget.data,
+                                    isFollowed: isFollow,
+                                  ));
+                                }),
+                                child: Text(widget.data["comments_count"])),
                             SizedBox(
                               width: 10,
                             ),
                             SvgPicture.asset(
-                              "assets/svg/hands.svg",
+                              "assets/svg/dollar-svgrepo-com.svg",
                               height: 21.sp,
                               width: 21.sp,
                               fit: BoxFit.scaleDown,
-                              color: Color.fromARGB(255, 102, 102, 102),
+                              color: Color.fromARGB(255, 0, 0, 0),
                             ),
                             SizedBox(
                               width: 30,

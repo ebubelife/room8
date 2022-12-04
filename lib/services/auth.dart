@@ -54,28 +54,33 @@ class Auth {
 
           return "That email is taken already!";
         } else if (data["code"] == 1) {
-          //email already exists
+          //Please use a valid email.
           return "Please use a valid email. ";
         } else if (data["code"] == 2) {
           //invalid email
-          return "That email is taken already!";
+          return "That username is taken already!";
+        } else if (data["code"] == 3) {
+          //invalid email
+          return "The email exists already!";
+        } else if (data["code"] == 711) {
+          //invalid email
+          return "Please upload an image!";
+        } else if (data["code"] == 600) {
+          //invalid email
+          return "Please upload an image less than 10 megabytes!";
         } else if (data["code"] == 200) {
           Hive.box("room8").put("loggedIn", true);
           return 200;
         } else {
           print(response.data.toString());
-          return "Sorry! could not connect to server. Try again.";
+          return "Sorry!could not connect to server. Try again.";
         }
       }
     } catch (e) {
       print("Error/Exception caught" + e.toString());
 
-      return "Sorry! could not connect to server. Try again.";
+      return "A network error occured! Try again!";
     }
-    throw (e) {
-      print("Error/Exception thrown" + e.toString());
-      return "Sorry! could not connect to server. Try again.";
-    };
   }
 
   Future<dynamic> login({
@@ -110,13 +115,11 @@ class Auth {
           Hive.box("room8").put("loggedIn", true);
           Hive.box("room8").put("user_data", data["user_data"]);
 
-        
-
           return 1;
         } else if (data["code"] == 2) {
           //Username or email incorrect
           print(response.data.toString());
-          return "Username or email incorrect";
+          return "Username or email or password incorrect ";
         } else {
           return "Sorry! could not connect to server. Try again.";
         }
@@ -169,7 +172,7 @@ class Auth {
           print(response.data.toString());
           return "username/email doesn't exist";
         } else {
-          return "Sorry! could not connect to server. Try again.";
+          return "That Email/Username doesn't exist";
         }
       }
     } catch (e) {
@@ -211,6 +214,7 @@ class Auth {
           return "Could not change password! Please try again";
         } else if (data["code"] == 1) {
           //otp sent successfully
+          Hive.box("room8").put("loggedIn", true);
           Hive.box("room8").put("user_data", data["user_data"]);
           return 1;
         } else if (data["code"] == 2) {
@@ -232,4 +236,7 @@ class Auth {
       return "Sorry! could not connect to server. Try again.";
     };
   }
+
+  
+
 }

@@ -70,41 +70,53 @@ class _NewPostState extends State<NewPost> {
                     onTap: (() {
                       // if (post_controller.text.toString().isNotEmpty) {
                       loading2("Loading", context);
-                      Posts()
-                          .post(
-                              media: selected_images,
-                              text: post_controller.text.toString())
-                          .then((value) => {
-                                if (value == 1)
-                                  {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(),
-                                    showToast("Post created successfully!"),
-                                    Get.offAll(
-                                        Landing(title: "Room8 Social - Home"))
-                                  }
-                                else if (value == 0)
-                                  {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(),
-                                    showToast(
-                                        "Could not upload, a server error occured!"),
-                                  }
-                                else if (value == 0)
-                                  {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(),
-                                    showToast(
-                                        "Could not upload the media, please try again!"),
-                                  }
-                                else if (value == 3)
-                                  {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(),
-                                    showToast(
-                                        "Please pick an image less than 20MB!"),
-                                  }
-                              });
+
+                      if ((post_controller.text.isNotEmpty &&
+                              selected_images.isEmpty) ||
+                          (post_controller.text.isEmpty &&
+                              selected_images.isNotEmpty) ||
+                          (post_controller.text.isNotEmpty &&
+                              selected_images.isNotEmpty)) {
+                        Posts()
+                            .post(
+                                media: selected_images,
+                                text: post_controller.text.toString())
+                            .then((value) => {
+                                  if (value == 1)
+                                    {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(),
+                                      showToast("Post created successfully!"),
+                                      Get.offAll(
+                                          Landing(title: "Room8 Social - Home"))
+                                    }
+                                  else if (value == 0)
+                                    {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(),
+                                      showToast(
+                                          "Could not upload, a server error occured!"),
+                                    }
+                                  else if (value == 0)
+                                    {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(),
+                                      showToast(
+                                          "Could not upload the media, please try again!"),
+                                    }
+                                  else if (value == 3)
+                                    {
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop(),
+                                      showToast(
+                                          "Please pick an image less than 20MB!"),
+                                    }
+                                });
+                      } else {
+                        showToast(
+                            "Please enter valid characters to make a post");
+                      }
+
                       //}
                     }),
                     child: Text(
@@ -179,7 +191,6 @@ class _NewPostState extends State<NewPost> {
                                           contentPadding: EdgeInsets.all(6),
                                           labelText: 'Want to add to the room?',
                                           alignLabelWithHint: true,
-                                          
                                           floatingLabelAlignment:
                                               FloatingLabelAlignment.start),
                                       keyboardType: TextInputType.multiline,
@@ -249,11 +260,9 @@ class _NewPostState extends State<NewPost> {
                           );
                           if (files != null && files.isNotEmpty) {
                             setState(() {
-                              for(var i = 0; i < files.length; i++){
-                                   selected_images.add(File(files[i].path));
-                               }
-                              
-                              
+                              for (var i = 0; i < files.length; i++) {
+                                selected_images.add(File(files[i].path));
+                              }
                             });
                           }
                         },

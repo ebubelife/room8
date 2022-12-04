@@ -105,6 +105,7 @@ class _SignupState extends State<Signup> {
                                                         await picker.pickImage(
                                                             source: ImageSource
                                                                 .gallery,
+                                                                
                                                             imageQuality: 50);
                                                     if (file != null) {
                                                       setState(() {
@@ -178,7 +179,7 @@ class _SignupState extends State<Signup> {
                               CustomField(
                                   hint: "Username",
                                   controller: username_controller,
-                                  maxL: 160),
+                                  maxL: 15),
                               CustomField(
                                 hint: "Email Address",
                                 controller: email_controller,
@@ -289,7 +290,10 @@ class _SignupState extends State<Signup> {
                                                                   true)
                                                           .pop(),
                                                       showToast(
-                                                          "Your account was created successfully")
+                                                          "Your account was created successfully"),
+                                                      Get.to(Login(
+                                                          title:
+                                                              "Room8 - Login"))
                                                     }
                                                   else
                                                     {

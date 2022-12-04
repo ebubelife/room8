@@ -84,7 +84,19 @@ class _EnterOTP_PasswordState extends State<EnterOTP_Password> {
                               CustomField(
                                 hint: "New Password",
                                 controller: new_password,
-                                obscureText: true,
+                                obscureText: obscure_password,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() =>
+                                        obscure_password = !obscure_password);
+                                  },
+                                  icon: Icon(
+                                      obscure_password
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.grey,
+                                      size: 20),
+                                ),
                               ),
                               SizedBox(
                                 height: 20.sp,
