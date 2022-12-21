@@ -186,7 +186,7 @@ class _NewPostState extends State<NewPost> {
                                                 255, 224, 224, 224))),
                                     child: TextField(
                                       controller: post_controller,
-                                      maxLength: 1000,
+                                      maxLength: 180,
                                       decoration: InputDecoration(
                                           contentPadding: EdgeInsets.all(6),
                                           labelText: 'Want to add to the room?',

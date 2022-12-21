@@ -308,144 +308,327 @@ class _ProfileState extends State<Profile> {
                                                 ],
                                               ),
                                             ),
-                                          ];
-                                        },
-                                        offset: const Offset(0, 40),
-                                        onSelected: (value) {
-                                          Get.dialog(Dialog(
-                                            backgroundColor:
-                                                Colors.grey.withOpacity(0.6),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(20),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
+                                            PopupMenuItem(
+                                              value: 'logout',
+                                              child: Row(
                                                 children: [
-                                                  Text(
-                                                    "This action will permanently delete all of your data and log you out. Are you sure you want to continue?",
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  Container(
+                                                    width: 33,
+                                                    height: 33,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Color.fromARGB(
+                                                          255, 221, 99, 0),
+                                                    ),
+                                                    child: Center(
+                                                      child: Icon(
+                                                        Icons
+                                                            .power_settings_new_outlined,
+                                                        size: 15,
+                                                        color: Color.fromARGB(
+                                                            255, 255, 255, 255),
+                                                      ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 20),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.of(
-                                                                      context,
-                                                                      rootNavigator:
-                                                                          true)
-                                                                  .pop(),
-                                                          child: Text(
-                                                            "No",
-                                                            style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      89,
-                                                                      180,
-                                                                      255),
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                          style: ButtonStyle(
-                                                            side:
-                                                                MaterialStateProperty
-                                                                    .all(
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .blue,
-                                                                  width: 2),
-                                                            ),
-                                                            backgroundColor:
-                                                                MaterialStateProperty
-                                                                    .all(Colors
-                                                                        .white),
-                                                            shape:
-                                                                MaterialStateProperty
-                                                                    .all(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 20),
-                                                      Expanded(
-                                                        child: TextButton(
-                                                          onPressed: () {
-                                                            loading2("Loading",
-                                                                context);
-                                                            Users()
-                                                                .deactivate(
-                                                                    id_to_deactivate:
-                                                                        user_data[
-                                                                            "id"])
-                                                                .then(
-                                                                    (value) => {
-                                                                          if (value ==
-                                                                              1)
-                                                                            {
-                                                                              Hive.box("room8").put("loggedIn", false),
-                                                                              Hive.box("room8").delete("user_data"),
-                                                                              Hive.box("room8").delete("access_token"),
-                                                                              Hive.box("room8").delete("user_data_for_profile_inview"),
-
-                                                                              Get.to(Signup(title: "Room8 - Signup")),
-
-                                                                              // Navigator.of(context, rootNavigator: true).pop(),
-                                                                              // Navigator.of(context, rootNavigator: true).pop(),
-                                                                              Navigator.of(context, rootNavigator: true).pop(),
-
-                                                                              Navigator.of(context, rootNavigator: true).pop(),
-                                                                              Get.offAll(Signup(title: "Room8 - Signup"))
-                                                                            }
-                                                                          else
-                                                                            {
-                                                                              showToast("Oops! An error occured! Please try"),
-                                                                              Navigator.of(context, rootNavigator: true).pop(),
-                                                                              Navigator.of(context, rootNavigator: true).pop(),
-                                                                            }
-                                                                        });
-                                                          },
-                                                          child: Text(
-                                                            "Yes",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                          style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStateProperty
-                                                                    .all(Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            106,
-                                                                            187,
-                                                                            253)),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                  const SizedBox(width: 20),
+                                                  const Text(
+                                                    "Logout",
+                                                    style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 46, 46, 46),
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
                                                   )
                                                 ],
                                               ),
                                             ),
-                                          ));
+                                          ];
+                                        },
+                                        offset: const Offset(0, 40),
+                                        onSelected: (value) {
+                                          if (value == "deactivate") {
+                                            Get.dialog(Dialog(
+                                              backgroundColor:
+                                                  Colors.grey.withOpacity(0.6),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(20),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      "This action will permanently delete all of your data and log you out. Are you sure you want to continue?",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                                        context,
+                                                                        rootNavigator:
+                                                                            true)
+                                                                    .pop(),
+                                                            child: Text(
+                                                              "No",
+                                                              style: TextStyle(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        89,
+                                                                        180,
+                                                                        255),
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            style: ButtonStyle(
+                                                              side:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                BorderSide(
+                                                                    color: Colors
+                                                                        .blue,
+                                                                    width: 2),
+                                                              ),
+                                                              backgroundColor:
+                                                                  MaterialStateProperty
+                                                                      .all(Colors
+                                                                          .white),
+                                                              shape:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 20),
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              loading2(
+                                                                  "Loading",
+                                                                  context);
+                                                              Users()
+                                                                  .deactivate(
+                                                                      id_to_deactivate:
+                                                                          user_data[
+                                                                              "id"])
+                                                                  .then(
+                                                                      (value) =>
+                                                                          {
+                                                                            if (value ==
+                                                                                1)
+                                                                              {
+                                                                                Hive.box("room8").put("loggedIn", false),
+                                                                                Hive.box("room8").delete("user_data"),
+                                                                                Hive.box("room8").delete("access_token"),
+                                                                                Hive.box("room8").delete("user_data_for_profile_inview"),
+
+                                                                                Get.to(Signup(title: "Room8 - Signup")),
+
+                                                                                // Navigator.of(context, rootNavigator: true).pop(),
+                                                                                // Navigator.of(context, rootNavigator: true).pop(),
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+                                                                                Get.offAll(Signup(title: "Room8 - Signup"))
+                                                                              }
+                                                                            else
+                                                                              {
+                                                                                showToast("Oops! An error occured! Please try"),
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+                                                                                Navigator.of(context, rootNavigator: true).pop(),
+                                                                              }
+                                                                          });
+                                                            },
+                                                            child: Text(
+                                                              "Yes",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18,
+                                                              ),
+                                                            ),
+                                                            style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  MaterialStateProperty.all(
+                                                                      Color.fromARGB(
+                                                                          255,
+                                                                          106,
+                                                                          187,
+                                                                          253)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ));
+                                          } else if (value == "logout") {
+                                            Get.dialog(Dialog(
+                                              backgroundColor:
+                                                  Colors.grey.withOpacity(0.6),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(20),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      "Do you want to logout?",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                                        context,
+                                                                        rootNavigator:
+                                                                            true)
+                                                                    .pop(),
+                                                            child: Text(
+                                                              "No",
+                                                              style: TextStyle(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        89,
+                                                                        180,
+                                                                        255),
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            style: ButtonStyle(
+                                                              side:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                BorderSide(
+                                                                    color: Colors
+                                                                        .blue,
+                                                                    width: 2),
+                                                              ),
+                                                              backgroundColor:
+                                                                  MaterialStateProperty
+                                                                      .all(Colors
+                                                                          .white),
+                                                              shape:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 20),
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              Hive.box("room8")
+                                                                  .put(
+                                                                      "loggedIn",
+                                                                      false);
+                                                              Hive.box("room8")
+                                                                  .delete(
+                                                                      "user_data");
+                                                              Hive.box("room8")
+                                                                  .delete(
+                                                                      "access_token");
+                                                              Hive.box("room8")
+                                                                  .delete(
+                                                                      "user_data_for_profile_inview");
+
+                                                              Get.to(Signup(
+                                                                  title:
+                                                                      "Room8 - Signup"));
+
+                                                              // Navigator.of(context, rootNavigator: true).pop(),
+                                                              // Navigator.of(context, rootNavigator: true).pop(),
+                                                              Navigator.of(
+                                                                      context,
+                                                                      rootNavigator:
+                                                                          true)
+                                                                  .pop();
+
+                                                              Navigator.of(
+                                                                      context,
+                                                                      rootNavigator:
+                                                                          true)
+                                                                  .pop();
+                                                              Get.offAll(Signup(
+                                                                  title:
+                                                                      "Room8 - Signup"));
+                                                            },
+                                                            child: Text(
+                                                              "Yes",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18,
+                                                              ),
+                                                            ),
+                                                            style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  MaterialStateProperty.all(
+                                                                      Color.fromARGB(
+                                                                          255,
+                                                                          106,
+                                                                          187,
+                                                                          253)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ));
+                                          }
                                         })
                                     : SizedBox()
                               ],
@@ -474,9 +657,7 @@ class _ProfileState extends State<Profile> {
                                 Row(
                                   children: [
                                     Text(
-                                      widget.id == user_data["id"]
-                                          ? user_data["follower_count"]
-                                          : follwowingCount,
+                                      follwowingCount!,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -495,9 +676,7 @@ class _ProfileState extends State<Profile> {
                                 Row(
                                   children: [
                                     Text(
-                                      widget.id == user_data["id"]
-                                          ? user_data["following_count"]
-                                          : follwowersCount,
+                                      follwowersCount!,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),

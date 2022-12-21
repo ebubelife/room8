@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "60496736088",
+    "project_id": "room8-100c8",
+    "storage_bucket": "room8-100c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60496736088:android:74bce6a0a83af7c7d4ff2d",
+        "android_client_info": {
+          "package_name": "com.room.roomeight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60496736088-q4v1atvbvfehsh1c67l33o5a2ccq5tuc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALuNFfAdrHXQyAnchEGj1Nz5o_ofwEkpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60496736088-q4v1atvbvfehsh1c67l33o5a2ccq5tuc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

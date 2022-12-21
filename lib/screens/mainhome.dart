@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:roomnew/screens/notifications.dart';
+import 'package:roomnew/screens/profile.dart';
 import '../components/loading.dart';
 import '../components/post.dart';
 import '../services/posts.dart';
@@ -43,7 +46,7 @@ class _MainHomeState extends State<MainHome>
   late final Future _future;
   List? posts = [];
   bool show_top_strip = false;
-
+  var user_data = Hive.box("room8").get("user_data");
   late Future<dynamic> future;
 
   @override
@@ -110,30 +113,88 @@ class _MainHomeState extends State<MainHome>
     }
 */
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF1F1F1).withOpacity(0.4),
 //                  appBar: AppBar(),
       body: Stack(
         children: [
           Container(
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Color(0xFFF1F1F1).withOpacity(0.4),
+              padding: EdgeInsets.only(left: 16, right: 16),
               height: double.maxFinite,
               child: SafeArea(
                 child: Container(
                     height: double.maxFinite,
                     width: double.maxFinite,
                     padding: EdgeInsets.all(0),
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Color(0xFFF1F1F1).withOpacity(0.4),
                     //get all posts for user
                     child: Column(
                       children: [
                         //logo
 
-                        Align(
-                          child: Image.asset("assets/images/logo.PNG",
-                              width: 90, height: 30),
-                          alignment: Alignment.topLeft,
-                        ),
-
+                        Container(
+                            margin: EdgeInsets.only(top: 10, bottom: 3),
+                            height: 50,
+                            width: double.maxFinite,
+                            child: GestureDetector(
+                                onTap: () {
+                                  scrollUp();
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/svg/home-svgrepo-com(1).svg",
+                                      height: 21,
+                                      width: 21,
+                                      //  fit: BoxFit.scaleDown,
+                                      color: Colors.red,
+                                    ),
+                                    SvgPicture.asset(
+                                      "assets/svg/ROOM8.svg",
+                                      height: 21,
+                                      width: 21,
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      child: Image.asset(
+                                        "assets/images/bell1.png",
+                                      ),
+                                      onTap: (() {
+                                        Get.to(
+                                          Notifications(
+                                            title: "Room8 - Notifications",
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                    SizedBox(
+                                      width: 21,
+                                    ),
+                                    Image.asset(
+                                      "assets/images/magnifying-glass1.png",
+                                    ),
+                                    SizedBox(
+                                      width: 21,
+                                    ),
+                                    GestureDetector(
+                                      child: Image.asset(
+                                        "assets/images/profile1.png",
+                                      ),
+                                      onTap: (() {
+                                        Get.to(
+                                          Profile(
+                                            title: "",
+                                            id: user_data["id"],
+                                            profile_img: "/",
+                                            username: "",
+                                            isFollowed: true,
+                                          ),
+                                        );
+                                      }),
+                                    )
+                                  ],
+                                ))),
                         Expanded(
                             child: FutureBuilder(
                                 future: future,
@@ -325,7 +386,7 @@ class _MainHomeState extends State<MainHome>
 //create method to remove item from list when data is changed in child
   void remove_item_from_list() {
     setState(() {
-       future = _fetchData();
+      future = _fetchData();
       print("eliminated");
     });
   }
@@ -339,10 +400,8 @@ class _MainHomeState extends State<MainHome>
   }
 
   Future<dynamic> _fetchData() async {
-    var o = Posts().get_all_posts();
+    var data = Posts().get_all_posts();
 
-    print(o.toString());
-
-    return o;
+    return data;
   }
 }

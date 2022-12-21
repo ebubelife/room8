@@ -6,8 +6,15 @@ import 'package:roomnew/screens/signup.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive/hive.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
+
+   WidgetsFlutterBinding.ensureInitialized();
+
+    await Firebase.initializeApp();
+ 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor:
         Color.fromARGB(255, 0, 0, 0), // navigation bar color
@@ -15,7 +22,7 @@ void main() async {
   ));
   await Hive.initFlutter();
 
-  WidgetsFlutterBinding.ensureInitialized();
+
 
   await Hive.openBox("room8");
   runApp(const MyApp());

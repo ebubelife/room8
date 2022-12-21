@@ -146,74 +146,88 @@ class _CommentsState extends State<Comments> {
                                                                 .post["creator_details"]
                                                             ["isFollow"]));
                                                   }),
-                                                  child: ClipOval(
-                                                      child: Container(
-                                                    height: 30,
-                                                    width: 30,
-                                                    child: ImageFade(
-                                                      image: NetworkImage(
-                                                          "https://statup.ng/room8/room8/" +
-                                                              comments[index][
-                                                                      "creator_details"]
-                                                                  [
-                                                                  "profile_image_url"]),
-                                                      duration: const Duration(
-                                                          milliseconds: 900),
-                                                      syncDuration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  150),
+                                                  child: Container(
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 35),
+                                                      child: ClipOval(
+                                                          child: Container(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: ImageFade(
+                                                          image: NetworkImage(
+                                                              "https://statup.ng/room8/room8/" +
+                                                                  comments[index]
+                                                                          [
+                                                                          "creator_details"]
+                                                                      [
+                                                                      "profile_image_url"]),
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      900),
+                                                          syncDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      150),
 
-                                                      alignment:
-                                                          Alignment.center,
+                                                          alignment:
+                                                              Alignment.center,
 
-                                                      fit: BoxFit.cover,
-                                                      placeholder: Container(
-                                                        color: const Color(
-                                                            0xFFCFCDCA),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: const Icon(
-                                                            Icons.photo,
-                                                            color:
-                                                                Colors.white30,
-                                                            size: 128.0),
-                                                      ),
-                                                      loadingBuilder: (context,
-                                                              progress,
-                                                              chunkEvent) =>
-                                                          Center(
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                        value: progress,
-                                                        strokeWidth: 0.2,
-                                                        color: Colors.white,
-                                                      )),
-
-                                                      // displayed when an error occurs:
-                                                      errorBuilder:
-                                                          (context, error) =>
+                                                          fit: BoxFit.cover,
+                                                          placeholder:
                                                               Container(
-                                                        color: const Color(
-                                                            0xFF6F6D6A),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: const Icon(
-                                                            Icons.warning,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    255,
-                                                                    220,
-                                                                    63),
-                                                            size: 128.0),
-                                                      ),
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                        color: Color.fromARGB(
-                                                            255, 173, 173, 172),
-                                                        shape: BoxShape.circle),
-                                                  ))),
+                                                            color: const Color(
+                                                                0xFFCFCDCA),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: const Icon(
+                                                                Icons.photo,
+                                                                color: Colors
+                                                                    .white30,
+                                                                size: 128.0),
+                                                          ),
+                                                          loadingBuilder: (context,
+                                                                  progress,
+                                                                  chunkEvent) =>
+                                                              Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(
+                                                            value: progress,
+                                                            strokeWidth: 0.2,
+                                                            color: Colors.white,
+                                                          )),
+
+                                                          // displayed when an error occurs:
+                                                          errorBuilder:
+                                                              (context,
+                                                                      error) =>
+                                                                  Container(
+                                                            color: const Color(
+                                                                0xFF6F6D6A),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: const Icon(
+                                                                Icons.warning,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        255,
+                                                                        220,
+                                                                        63),
+                                                                size: 128.0),
+                                                          ),
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        173,
+                                                                        173,
+                                                                        172),
+                                                                shape: BoxShape
+                                                                    .circle),
+                                                      )))),
                                               Wrap(children: [
                                                 Column(
                                                   crossAxisAlignment:

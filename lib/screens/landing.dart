@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:image_fade/image_fade.dart';
+
 import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
 import 'package:get/get.dart';
@@ -14,10 +16,12 @@ import 'package:roomnew/screens/mainhome.dart';
 import 'package:roomnew/screens/new_post.dart';
 import 'package:roomnew/screens/profile.dart';
 import 'package:roomnew/screens/search.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:roomnew/services/users.dart';
 import '../components/post.dart';
 import '../components/timeago.dart';
 import '../services/posts.dart';
+import 'notifications.dart';
 
 class MainHomeController {
   late void Function() scrollUp;
@@ -74,15 +78,23 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     Hive.box("room8").put("prev_page", 2);
+//initialize the firebase state
+    initialize_firebase();
 
+    //save_firebase_token
+    _save_firebase_token();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    print("GOAT  ${user_data["id"]}");
     List<Widget> _pages = [
-      Search(title: "Room8 Social - search"),
+      Notifications(
+        title: "Room8 Social - notifications",
+      ),
       Search(title: "Room8 Social - search"),
       MainHome(
         title: "",
@@ -100,21 +112,21 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
     ];
     String? profile_img_url = user_data["profile_image_url"];
     return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: Container(
-        height: 60.0,
-        width: 60.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: () {
-              Get.to(NewPost(title: "Room8 Social - Post"));
-            },
-            backgroundColor: Color(0xfff75941),
-            child: Icon(Icons.add, size: 35, color: Colors.white),
+        backgroundColor: Colors.white,
+        floatingActionButton: Container(
+          height: 60.0,
+          width: 60.0,
+          child: FittedBox(
+            child: FloatingActionButton(
+              onPressed: () {
+                Get.to(NewPost(title: "Room8 Social - Post"));
+              },
+              backgroundColor: Color.fromARGB(255, 0, 0, 0),
+              child: Icon(Icons.add, size: 35, color: Colors.white),
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: Theme(
+        /* bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
               //  canvasColor: Color.fromARGB(0, 255, 255, 255),
               primaryColor: Colors.red,
@@ -189,7 +201,6 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
                         ),
                       ),
                       BottomNavigationBarItem(
-                        
                         icon: ClipOval(
                             child: Container(
                           height: 30,
@@ -248,13 +259,11 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
 
                       pageController.jumpToPage(index);
                     },
-                  )))),
-      body: PageView(
-        children: _pages,
-        controller: pageController,
-        onPageChanged: onPageChanged,
-      ),
-    );
+                  )))),*/
+        body: MainHome(
+            title: "Room8 - Home",
+            offset: offset,
+            mainHomeController: mainHomeController));
   }
 
   Widget getPosts(Map posts, bool isFollow) {
@@ -263,5 +272,39 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
       isFollowed: isFollow,
       onSonChanged: (id) => {},
     );
+  }
+
+  Future<String> initialize_firebase() async {
+    Firebase.initializeApp();
+
+    String fb_token = "";
+
+    //retrieve firebase token
+
+    FirebaseMessaging.instance.getToken().then((value) => {
+          print("fcm token value is $value"),
+          fb_token = value!,
+          user_data["firebase_token"] = fb_token
+        });
+
+    return fb_token;
+  }
+
+  Future<dynamic> _save_firebase_token() async {
+    Firebase.initializeApp();
+
+    String fb_token = "";
+    var data;
+
+    //retrieve firebase token
+
+    FirebaseMessaging.instance.getToken().then((value) => {
+          print("fcm token value is $value"),
+          fb_token = value!,
+          user_data["firebase_token"] = fb_token,
+          data = Users().save_firebase_token(firebase_token: fb_token)
+        });
+
+    return data;
   }
 }

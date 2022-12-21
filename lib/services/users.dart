@@ -59,6 +59,7 @@ class Users {
   }
 
   Future<dynamic> deactivate({String? id_to_deactivate}) async {
+    String? access_token = user_data["access_token"];
     try {
       var dio = eos.Dio();
 
@@ -71,6 +72,7 @@ class Users {
           options: eos.Options(
             headers: {
               "accept": "application/json",
+              "Authorization": access_token.toString()
             },
           ));
 
@@ -105,6 +107,7 @@ class Users {
     };
   }
 
+  
   Future<dynamic> updateProfilePic({
     @required File? profile_pic,
   }) async {
@@ -172,5 +175,103 @@ class Users {
 
       return "A network error occured! Try again!";
     }
+  }
+
+  Future<dynamic> save_device_type({String? device_type}) async {
+    try {
+      var dio = eos.Dio();
+
+      var formData = eos.FormData.fromMap({
+        'device_type': device_type,
+      });
+
+      var response = await dio.post(baseUrl + 'members/save_device_type',
+          data: formData,
+          options: eos.Options(
+            headers: {
+              "accept": "application/json",
+            },
+          ));
+
+      print(response.data.toString());
+      var data = jsonDecode(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (data["code"] == 0) {
+          //network or server error
+
+          return "An error occured";
+        } else if (data["code"] == 1) {
+          //user was deleted successfully
+
+          return 1;
+        } else if (data["code"] == 2) {
+          //failed to delete user
+          return 2;
+        } else {
+          //an error occured... possibly server error
+          print(response.data.toString());
+          return 0;
+        }
+      }
+    } catch (e) {
+      print("Error/Exception caught" + e.toString());
+
+      return "Sorry! could not connect to server. Try again.";
+    }
+    throw (e) {
+      print("Error/Exception thrown" + e.toString());
+      return "Sorry! could not connect to server. Try again.";
+    };
+  }
+
+  Future<dynamic> save_firebase_token({String? firebase_token}) async {
+    String? access_token = user_data["access_token"];
+    try {
+      var dio = eos.Dio();
+
+      var formData = eos.FormData.fromMap({
+        'firebase_token': firebase_token,
+      });
+
+      var response = await dio.post(baseUrl + 'members/save_firebase_token',
+          data: formData,
+          options: eos.Options(
+            headers: {
+              "accept": "application/json",
+              "Authorization": access_token.toString()
+            },
+          ));
+
+      print(response.data.toString());
+      var data = jsonDecode(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (data["code"] == 0) {
+          //network or server error
+
+          return "An error occured";
+        } else if (data["code"] == 1) {
+          //token saved successfully
+
+          print("ssssssssssssss");
+
+          return 1;
+        } else if (data["code"] == 2) {
+          //failed to save_firebase_token
+          return 2;
+        } else {
+          //an error occured... possibly server error
+          print(response.data.toString());
+          return 0;
+        }
+      }
+    } catch (e) {
+      print("Error/Exception caught" + e.toString());
+
+      return "Sorry! could not connect to server. Try again.";
+    }
+    throw (e) {
+      print("Error/Exception thrown" + e.toString());
+      return "Sorry! could not connect to server. Try again.";
+    };
   }
 }
