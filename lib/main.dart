@@ -14,6 +14,8 @@ void main() async {
    WidgetsFlutterBinding.ensureInitialized();
 
     await Firebase.initializeApp();
+
+  
  
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor:
@@ -21,9 +23,6 @@ void main() async {
     statusBarColor: Colors.pink, // status bar color
   ));
   await Hive.initFlutter();
-
-
-
   await Hive.openBox("room8");
   runApp(const MyApp());
 }

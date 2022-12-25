@@ -60,7 +60,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
       isFollow = isFollow;
 
     return Container(
-        margin: EdgeInsets.only(bottom: 0, top: 10),
+        margin: EdgeInsets.only(bottom: 0, top: 2),
         child: Column(
           children: [
             SizedBox(height: 5),
@@ -91,13 +91,14 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                       ["profile_image_url"],
                                   username: widget.data["creator_details"]
                                       ["username"],
+                                  notif_id: "",
                                   isFollowed: widget.data["creator_details"]
                                       ["isFollow"]));
                             }),
                             child: ClipOval(
                                 child: Container(
-                              height: 50,
-                              width: 50,
+                              height: 43,
+                              width: 43,
                               child: ImageFade(
                                 image: NetworkImage(
                                     "https://statup.ng/room8/room8/" +
@@ -144,9 +145,11 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                               children: [
                                 Text(
                                   widget.data["creator_details"]["username"],
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 18),
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.black,
+                                      fontSize: 15),
                                 ),
                                 SizedBox(width: 5),
                                 user_data["id"] ==
@@ -192,14 +195,14 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                                 : "Follow",
                                             style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 11),
+                                                fontSize: 9),
                                           ),
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 4),
+                                              horizontal: 15, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: Colors.black,
                                             borderRadius: BorderRadius.all(
-                                                Radius.circular(8)),
+                                                Radius.circular(4)),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.grey
@@ -349,10 +352,118 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                         ),
                       ],
                     ),
-                    SizedBox(height: 18),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          child: Text(
+                            widget.data["creator_details"]["state"],
+                            style: TextStyle(color: Colors.white, fontSize: 11),
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFF5555),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 2,
+                                offset:
+                                    Offset(0, 2), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Image.asset(
+                            "assets/images/star-dynamic-gradient.png",
+                            height: 21,
+                            width: 21,
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          child: Text(
+                            widget.data["creator_details"]["preference"],
+                            style: TextStyle(color: Colors.white, fontSize: 11),
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFF5555),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 2,
+                                offset:
+                                    Offset(0, 2), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 1,
+                        ),
+                        Container(
+                          child: Image.asset(
+                            "assets/images/travel-front-gradient.png",
+                            height: 21,
+                            width: 21,
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        ClipOval(
+                            child: Container(
+                          height: 20,
+                          width: 20,
+                          child: Center(
+                              child: Text(
+                            widget.data["creator_details"]["gender"] == "male"
+                                ? "M"
+                                : "F",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800),
+                          )),
+                          decoration: BoxDecoration(
+                              color: Color(0xFFFF5555), shape: BoxShape.circle),
+                        )),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        ClipOval(
+                            child: Container(
+                          height: 20,
+                          width: 20,
+                          child: Center(
+                              child: Image.asset(widget.data["creator_details"]
+                                          ["gender"] ==
+                                      "male"
+                                  ? "assets/images/cute-color-vector-illustration-beard-afro-black-guy-face-avatar-positive-young-black-guy-smiling-87383651.jpg"
+                                  : "assets/images/pngtree-personality-avatar-black-women-illustration-elements-png-image_2352544-removebg-preview.png")),
+                          decoration: BoxDecoration(
+                              // color: Color.fromARGB(255, 219, 48, 5),
+                              shape: BoxShape.circle),
+                        )),
+                      ],
+                    ),
+                    SizedBox(height: 10),
                     widget.data["post_type"] == "IMAGE"
                         ? Container(
-                            height: 360,
                             width: double.maxFinite,
                             child: CarouselSlider(
                               options: CarouselOptions(
@@ -383,6 +494,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                           ));
                                         }),
                                         child: Container(
+                                          height: Get.height * 0.8,
                                           width:
                                               MediaQuery.of(context).size.width,
                                           margin: EdgeInsets.symmetric(

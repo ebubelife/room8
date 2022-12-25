@@ -15,6 +15,7 @@ import 'package:roomnew/screens/view_picture.dart';
 import '../components/loading.dart';
 import '../components/post.dart';
 import '../components/toast.dart';
+import '../services/others.dart';
 import '../services/posts.dart';
 import '../services/users.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -26,9 +27,10 @@ class Profile extends StatefulWidget {
       required this.id,
       required this.profile_img,
       required this.isFollowed,
+      required this.notif_id,
       required this.username});
 
-  final String title, id, profile_img, username;
+  final String title, id, notif_id, profile_img, username;
   final bool isFollowed;
 
   @override
@@ -46,10 +48,12 @@ class _ProfileState extends State<Profile> {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   bool display_error_img = true;
   late Future<dynamic> future;
+  late Future<dynamic> update_notification;
 
   @override
   void initState() {
     future = _fetchData();
+    update_notification = _update_notif(widget.notif_id);
 
     super.initState();
   }
@@ -63,7 +67,9 @@ class _ProfileState extends State<Profile> {
     String? follwowersCount = "";
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        //  backgroundColor: Color.fromARGB(255, 252, 252, 252).withOpacity(0.6),
+
+        // appBar: AppBar(title: Text("Profile")),
         body: FutureBuilder(
             future: future,
             builder: (context, AsyncSnapshot snapshot) {
@@ -94,13 +100,93 @@ class _ProfileState extends State<Profile> {
                   return Container(
                       height: double.maxFinite,
                       width: double.maxFinite,
-                      color: Color.fromARGB(255, 252, 250, 249),
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      color:
+                          Color.fromARGB(255, 231, 230, 230).withOpacity(0.6),
                       child: SingleChildScrollView(
                           child: Column(children: [
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: widget.id != user_data["id"]
+                                ? GestureDetector(
+                                    onTap: () => ({
+                                          Users()
+                                              .followUser(
+                                                  id_to_follow:
+                                                      user_data_for_profile_inview[
+                                                          "id"])
+                                              .then((value) => {
+                                                    if (value == 1)
+                                                      {
+                                                        setState(() {
+                                                          int new_follow_count =
+                                                              (int.parse(
+                                                                      follwowingCount!) +
+                                                                  1);
+                                                          user_data_for_profile_inview[
+                                                                  "isFollowed"] =
+                                                              true;
+
+                                                          print(
+                                                              follwowingCount);
+                                                          future = _fetchData();
+                                                        }),
+                                                        showToast(
+                                                            "You just followed a user!"),
+                                                      }
+                                                    else if (value == 2)
+                                                      {
+                                                        setState(() {
+                                                          user_data_for_profile_inview[
+                                                                  "isFollowed"] =
+                                                              false;
+
+                                                          future = _fetchData();
+                                                        }),
+                                                        showToast(
+                                                            "You just unfollowed a user!"),
+                                                      }
+                                                    else if (value == 0)
+                                                      {
+                                                        showToast(
+                                                            "Operation failed"),
+                                                      }
+                                                  })
+                                          //}
+                                        }),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 50),
+                                      child: Text(
+                                        user_data_for_profile_inview[
+                                                    "isFollowed"] ==
+                                                true
+                                            ? "Following"
+                                            : "Follow",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 9),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 25, vertical: 7),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(7)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.3),
+                                            spreadRadius: 2,
+                                            blurRadius: 2,
+                                            offset: Offset(0,
+                                                2), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                : SizedBox()),
                         Container(
                             width: double.maxFinite,
                             height: 100,
-                            margin: EdgeInsets.only(top: 60),
+                            margin: EdgeInsets.only(top: 40),
                             child: Row(
                               children: [
                                 Spacer(),
@@ -630,7 +716,7 @@ class _ProfileState extends State<Profile> {
                                             ));
                                           }
                                         })
-                                    : SizedBox()
+                                    : SizedBox(),
                               ],
                             )),
                         SizedBox(height: 12),
@@ -639,8 +725,8 @@ class _ProfileState extends State<Profile> {
                           child: Center(
                               child: Text(
                             widget.id == user_data["id"]
-                                ? "@" + user_data["username"]
-                                : "@" + widget.username,
+                                ? user_data["username"]
+                                : widget.username,
                             maxLines: 1,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
@@ -654,105 +740,60 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      follwowingCount!,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                Card(
+                                    shape: BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      "Followers",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
+                                    child: Container(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              follwowingCount!,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 19),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              "Followers",
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ],
+                                        ))),
+                                SizedBox(
+                                  width: 3,
                                 ),
+                                Card(
+                                    shape: BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Container(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              follwowersCount!,
+                                              style: TextStyle(
+                                                  fontSize: 19,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              "Following",
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                            ),
+                                          ],
+                                        ))),
                                 SizedBox(
                                   width: 30,
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      follwowersCount!,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      "Following",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 30,
-                                ),
-                                widget.id != user_data["id"]
-                                    ? GestureDetector(
-                                        onTap: () => ({
-                                              Users()
-                                                  .followUser(
-                                                      id_to_follow:
-                                                          user_data_for_profile_inview[
-                                                              "id"])
-                                                  .then((value) => {
-                                                        if (value == 1)
-                                                          {
-                                                            setState(() {
-                                                              int new_follow_count =
-                                                                  (int.parse(
-                                                                          follwowingCount!) +
-                                                                      1);
-                                                              user_data_for_profile_inview[
-                                                                      "isFollowed"] =
-                                                                  true;
-
-                                                              print(
-                                                                  follwowingCount);
-                                                              future =
-                                                                  _fetchData();
-                                                            }),
-                                                            showToast(
-                                                                "You just followed a user!"),
-                                                          }
-                                                        else if (value == 2)
-                                                          {
-                                                            setState(() {
-                                                              user_data_for_profile_inview[
-                                                                      "isFollowed"] =
-                                                                  false;
-
-                                                              future =
-                                                                  _fetchData();
-                                                            }),
-                                                            showToast(
-                                                                "You just unfollowed a user!"),
-                                                          }
-                                                        else if (value == 0)
-                                                          {
-                                                            showToast(
-                                                                "Operation failed"),
-                                                          }
-                                                      })
-                                              //}
-                                            }),
-                                        child: SvgPicture.asset(
-                                          "assets/svg/follow.svg",
-                                          height: 21,
-                                          width: 21,
-                                          fit: BoxFit.scaleDown,
-                                          color: user_data_for_profile_inview[
-                                                      "isFollowed"] ==
-                                                  true
-                                              ? Color.fromARGB(255, 221, 30, 0)
-                                              : Color.fromARGB(255, 0, 0, 0),
-                                        ))
-                                    : SizedBox(),
                               ],
                             ))),
                         SizedBox(height: 7),
@@ -1161,8 +1202,8 @@ class _ProfileState extends State<Profile> {
                               child: Center(
                                   child: Text(
                                 widget.id == user_data["id"]
-                                    ? "@" + user_data["username"]
-                                    : "@" + widget.username,
+                                    ? user_data["username"]
+                                    : widget.username,
                                 maxLines: 1,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
@@ -1189,7 +1230,7 @@ class _ProfileState extends State<Profile> {
                                           width: 2,
                                         ),
                                         Text(
-                                          "Following",
+                                          "Followers",
                                           style: TextStyle(color: Colors.grey),
                                         ),
                                       ],
@@ -1210,7 +1251,7 @@ class _ProfileState extends State<Profile> {
                                           width: 2,
                                         ),
                                         Text(
-                                          "Followers",
+                                          "Following",
                                           style: TextStyle(color: Colors.grey),
                                         ),
                                       ],
@@ -1265,7 +1306,7 @@ class _ProfileState extends State<Profile> {
                                                               "isFollowed"] ==
                                                           true
                                                       ? Color.fromARGB(
-                                                          255, 221, 30, 0)
+                                                          255, 27, 1, 1)
                                                       : Color.fromARGB(
                                                           255, 87, 86, 86),
                                             ))
@@ -1339,6 +1380,16 @@ class _ProfileState extends State<Profile> {
     String id_to_get_post =
         user_data["id"] == widget.id ? user_data["id"] : widget.id;
     var o = Posts().get_all_users_posts(id_to_get_post);
+
+    print(o.toString());
+
+    return o;
+  }
+
+  Future<dynamic> _update_notif(notif_id) async {
+    String id_to_get_post =
+        user_data["id"] == widget.id ? user_data["id"] : widget.id;
+    var o = Others().update_notif(notif_id: notif_id);
 
     print(o.toString());
 

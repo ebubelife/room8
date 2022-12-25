@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:roomnew/screens/notifications.dart';
 import 'package:roomnew/screens/profile.dart';
+import 'package:roomnew/screens/search.dart';
+import 'package:roomnew/services/others.dart';
 import '../components/loading.dart';
 import '../components/post.dart';
 import '../services/posts.dart';
@@ -46,14 +48,22 @@ class _MainHomeState extends State<MainHome>
   late final Future _future;
   List? posts = [];
   bool show_top_strip = false;
-  var user_data = Hive.box("room8").get("user_data");
+  var user_data;
   late Future<dynamic> future;
+  late Future<dynamic> notifications;
+
+  var notifs;
+
+  bool containsStatusRead = false;
 
   @override
   void initState() {
     _controller = ScrollController();
     _controller.addListener(_scrollListener);
     future = _fetchData();
+    notifications = _fetchNotifications();
+
+    user_data = Hive.box("room8").get("user_data");
 
     super.initState();
   }
@@ -136,65 +146,92 @@ class _MainHomeState extends State<MainHome>
                             margin: EdgeInsets.only(top: 10, bottom: 3),
                             height: 50,
                             width: double.maxFinite,
-                            child: GestureDetector(
-                                onTap: () {
-                                  scrollUp();
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                    onTap: () {
+                                      scrollUp();
+                                    },
+                                    child: SvgPicture.asset(
                                       "assets/svg/home-svgrepo-com(1).svg",
                                       height: 21,
                                       width: 21,
                                       //  fit: BoxFit.scaleDown,
                                       color: Colors.red,
-                                    ),
-                                    SvgPicture.asset(
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      scrollUp();
+                                    },
+                                    child: SvgPicture.asset(
                                       "assets/svg/ROOM8.svg",
                                       height: 21,
                                       width: 21,
                                       fit: BoxFit.scaleDown,
-                                    ),
-                                    Spacer(),
-                                    GestureDetector(
-                                      child: Image.asset(
+                                    )),
+                                Spacer(),
+                                GestureDetector(
+                                  child: Stack(
+                                    children: [
+                                      Image.asset(
                                         "assets/images/bell1.png",
                                       ),
-                                      onTap: (() {
-                                        Get.to(
-                                          Notifications(
-                                            title: "Room8 - Notifications",
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                    SizedBox(
-                                      width: 21,
-                                    ),
-                                    Image.asset(
-                                      "assets/images/magnifying-glass1.png",
-                                    ),
-                                    SizedBox(
-                                      width: 21,
-                                    ),
-                                    GestureDetector(
-                                      child: Image.asset(
-                                        "assets/images/profile1.png",
+                                      containsStatusRead == true
+                                          ? Container(
+                                              height: 10,
+                                              width: 10,
+                                              decoration: BoxDecoration(
+                                                  color: Color.fromARGB(
+                                                      255, 247, 72, 3),
+                                                  shape: BoxShape.circle),
+                                            )
+                                          : SizedBox(),
+                                    ],
+                                  ),
+                                  onTap: (() {
+                                    Get.to(
+                                      Notifications(
+                                        title: "Room8 - Notifications",
                                       ),
-                                      onTap: (() {
-                                        Get.to(
-                                          Profile(
-                                            title: "",
-                                            id: user_data["id"],
-                                            profile_img: "/",
-                                            username: "",
-                                            isFollowed: true,
-                                          ),
-                                        );
-                                      }),
-                                    )
-                                  ],
-                                ))),
+                                    );
+                                  }),
+                                ),
+                                SizedBox(
+                                  width: 21,
+                                ),
+                                GestureDetector(
+                                    onTap: (() {
+                                      Get.to(
+                                        Search(
+                                          title: "Room8 - Search",
+                                        ),
+                                      );
+                                    }),
+                                    child: Image.asset(
+                                      "assets/images/magnifying-glass1.png",
+                                    )),
+                                SizedBox(
+                                  width: 21,
+                                ),
+                                GestureDetector(
+                                  child: Image.asset(
+                                    "assets/images/profile1.png",
+                                  ),
+                                  onTap: (() {
+                                    Get.to(
+                                      Profile(
+                                        title: "",
+                                        id: user_data["id"],
+                                        profile_img: "/",
+                                        username: "",
+                                        notif_id: "",
+                                        isFollowed: true,
+                                      ),
+                                    );
+                                  }),
+                                )
+                              ],
+                            )),
                         Expanded(
                             child: FutureBuilder(
                                 future: future,
@@ -403,5 +440,16 @@ class _MainHomeState extends State<MainHome>
     var data = Posts().get_all_posts();
 
     return data;
+  }
+
+  Future<dynamic> _fetchNotifications() async {
+    var notifications = Others().get_notifs();
+    setState(() {
+      notifs = user_data = Hive.box("room8").get("all_notifs");
+
+      containsStatusRead = notifs.any((map) => map["status"] == "UNREAD");
+    });
+
+    return notifications;
   }
 }

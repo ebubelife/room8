@@ -14,6 +14,7 @@ class Posts {
     String? access_token = user_data["access_token"];
     print("access_token" + access_token.toString());
 
+    print("user_id" + user_data["id"].toString());
     try {
       //eos.Response response;
       var dio = eos.Dio();

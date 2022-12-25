@@ -48,18 +48,24 @@ class _UserPostState extends State<UserPost> {
     List<dynamic> media_files = widget.data["media"];
     return Container(
         margin: EdgeInsets.only(top: 5, left: 3, right: 3),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(15))),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 15,
+              ),
               Row(children: [
                 SizedBox(
                   width: 10,
                 ),
                 ClipOval(
                     child: Container(
-                  height: 40,
-                  width: 40,
+                  height: 47,
+                  width: 47,
                   child: ImageFade(
                     image: NetworkImage("https://statup.ng/room8/room8/" +
                         widget.data["creator_details"]["profile_image_url"]!),
@@ -108,18 +114,23 @@ class _UserPostState extends State<UserPost> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "@" + widget.data["creator_details"]["username"],
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        widget.data["creator_details"]["username"],
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 20),
                       ),
                       SizedBox(
                         width: 10,
                       ),
-                      Expanded(
+                      Container(
+                          margin: EdgeInsets.only(top: 4),
                           child: Text(
-                        TimeFormatter()
-                            .readTimestamp(int.parse(widget.data["time"])),
-                        style: TextStyle(color: Colors.grey),
-                      )),
+                            TimeFormatter()
+                                .readTimestamp(int.parse(widget.data["time"])),
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500),
+                          )),
                       Spacer(),
                       SizedBox(
                         width: 33,
@@ -127,6 +138,13 @@ class _UserPostState extends State<UserPost> {
                         child: user_data["id"] ==
                                 widget.data["creator_details"]["creator_id"]
                             ? PopupMenuButton(
+                                icon: SvgPicture.asset(
+                                  "assets/svg/menu-svgrepo-com(1).svg",
+                                  height: 21,
+                                  width: 21,
+                                  fit: BoxFit.scaleDown,
+                                  color: Color.fromARGB(255, 206, 23, 23),
+                                ),
                                 itemBuilder: (ctx) {
                                   return [
                                     PopupMenuItem(
@@ -228,50 +246,112 @@ class _UserPostState extends State<UserPost> {
                   ),
                 )),
               ]),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                  margin: EdgeInsets.only(left: 14, right: 14),
-                  child: HashTagDetector().convertHashtag(
-                      widget.data["content"].toString(),
-                      media_files,
-                      text_expand!)),
-              (widget.data["content"].toString().split('').length > 60 &&
-                          text_expand == false) ||
-                      text_expand == null
-                  ? GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          text_expand = true;
-                        });
-                      },
-                      //handle display of less and more buttons to show or hide more text content
-                      child: Container(
-                          margin: EdgeInsets.only(left: 14, right: 14),
-                          child: Text("More...",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red))))
-                  : widget.data["content"].toString().split('').length > 100 &&
-                          text_expand == true
-                      ? GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              text_expand = !text_expand!;
-                            });
-                          },
-                          child: Container(
-                              margin: EdgeInsets.only(left: 14, right: 14),
-                              child: Text("Less...",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red))))
-                      : SizedBox(
-                          width: 10,
-                          height: 6,
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                    child: Text(
+                      widget.data["creator_details"]["state"],
+                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFF5555),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 2,
+                          offset: Offset(0, 2), // changes position of shadow
                         ),
-//display media from user post
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Image.asset(
+                      "assets/images/star-dynamic-gradient.png",
+                      height: 21,
+                      width: 21,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    child: Text(
+                      widget.data["creator_details"]["preference"],
+                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFF5555),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 2,
+                          offset: Offset(0, 2), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: 1,
+                  ),
+                  Container(
+                    child: Image.asset(
+                      "assets/images/travel-front-gradient.png",
+                      height: 21,
+                      width: 21,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  ClipOval(
+                      child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Center(
+                        child: Text(
+                      widget.data["creator_details"]["gender"] == "male"
+                          ? "M"
+                          : "F",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800),
+                    )),
+                    decoration: BoxDecoration(
+                        color: Color(0xFFFF5555), shape: BoxShape.circle),
+                  )),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  ClipOval(
+                      child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Center(
+                        child: Image.asset(widget.data["creator_details"]
+                                    ["gender"] ==
+                                "male"
+                            ? "assets/images/cute-color-vector-illustration-beard-afro-black-guy-face-avatar-positive-young-black-guy-smiling-87383651.jpg"
+                            : "assets/images/pngtree-personality-avatar-black-women-illustration-elements-png-image_2352544-removebg-preview.png")),
+                    decoration: BoxDecoration(
+                        // color: Color.fromARGB(255, 219, 48, 5),
+                        shape: BoxShape.circle),
+                  )),
+                ],
+              ),
+              SizedBox(height: 10),
               SizedBox(height: 3),
               widget.data["post_type"] == "IMAGE"
                   ? Container(
@@ -411,52 +491,12 @@ class _UserPostState extends State<UserPost> {
                                 },
                               ))
                           : SizedBox(),
+              SizedBox(
+                height: 3,
+              ),
 
-              SizedBox(height: 15),
-
-              Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Icon(
-                    Icons.visibility,
-                    size: 21,
-                  ),
-                  SizedBox(width: 3),
-                  Text(NumberFormat.compact()
-                      .format(int.parse(widget.data["views_count"]))),
-                  SizedBox(width: 10),
-                  GestureDetector(
-                      onTap: () {
-                        Get.to(Comments(
-                          post: widget.data,
-                          isFollowed: false,
-                        ));
-                      },
-                      child: SvgPicture.asset(
-                        "assets/svg/comment-svgrepo-com.svg",
-                        height: 21,
-                        width: 21,
-                        fit: BoxFit.scaleDown,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      )),
-                  SizedBox(width: 3),
-                  Text(widget.data["comments_count"]),
-                  SizedBox(width: 10),
-                  SvgPicture.asset(
-                    "assets/svg/dollar-svgrepo-com.svg",
-                    height: 21,
-                    width: 21,
-                    fit: BoxFit.scaleDown,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-
-                  SizedBox(
-                    width: 30,
-                  ),
-                  // ignore: unnecessary_null_comparison
-                  media_files != null
+              Center(
+                  child: media_files != null
                       ? media_files.length > 1
                           ? DotsIndicator(
                               dotsCount: media_files.length,
@@ -471,8 +511,102 @@ class _UserPostState extends State<UserPost> {
                               ),
                             )
                           : SizedBox()
-                      : SizedBox(),
+                      : SizedBox()),
+
+//display media from user post
+
+              SizedBox(height: 15),
+              Container(
+                  margin: EdgeInsets.only(left: 14, right: 14),
+                  child: HashTagDetector().convertHashtag(
+                      widget.data["content"].toString(),
+                      media_files,
+                      text_expand!)),
+              (widget.data["content"].toString().split('').length > 60 &&
+                          text_expand == false) ||
+                      text_expand == null
+                  ? GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          text_expand = true;
+                        });
+                      },
+                      //handle display of less and more buttons to show or hide more text content
+                      child: Container(
+                          margin: EdgeInsets.only(left: 14, right: 14),
+                          child: Text("More...",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red))))
+                  : widget.data["content"].toString().split('').length > 100 &&
+                          text_expand == true
+                      ? GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              text_expand = !text_expand!;
+                            });
+                          },
+                          child: Container(
+                              margin: EdgeInsets.only(left: 14, right: 14),
+                              child: Text("Less...",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red))))
+                      : SizedBox(
+                          width: 10,
+                          height: 6,
+                        ),
+
+              SizedBox(
+                height: 10,
+              ),
+
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SvgPicture.asset(
+                    "assets/svg/views.svg",
+                    height: 21,
+                    width: 21,
+                    fit: BoxFit.scaleDown,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  SizedBox(width: 3),
+                  Text(NumberFormat.compact()
+                      .format(int.parse(widget.data["views_count"]))),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(Comments(
+                        post: widget.data,
+                        isFollowed: false,
+                      ));
+                    },
+                    child: SvgPicture.asset(
+                      "assets/svg/comments1.svg",
+                      height: 21,
+                      width: 21,
+                      fit: BoxFit.scaleDown,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                  SizedBox(width: 3),
+                  Text(widget.data["comments_count"]),
+                  SizedBox(width: 10),
+                  SvgPicture.asset(
+                    "assets/svg/share.svg",
+                    height: 21.sp,
+                    width: 21.sp,
+                    fit: BoxFit.scaleDown,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
                   Spacer(),
+                  Image.asset("assets/images/gift.png"),
+                  SizedBox(
+                    width: 10,
+                  ),
                 ],
               ),
               SizedBox(height: 20),

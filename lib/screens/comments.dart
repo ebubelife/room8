@@ -18,52 +18,63 @@ import 'package:get/get.dart';
 
 import '../components/post.dart';
 import '../components/time_formater.dart';
+import '../services/others.dart';
 import '../services/posts.dart';
 import 'landing.dart';
 import 'new_post.dart';
 
 class Comments extends StatefulWidget {
-  const Comments({super.key, required this.post, this.isFollowed});
+  const Comments(
+      {super.key,
+      required this.post,
+      this.isFollowed,
+      this.notif_id,
+      this.target_comment});
 
   final Map post;
+  final target_comment;
   final bool? isFollowed;
+  final notif_id;
 
   @override
   State<Comments> createState() => _CommentsState();
 }
 
+ScrollController _controller = ScrollController();
+late Future<dynamic> update_notification;
+
 class _CommentsState extends State<Comments> {
   @override
   void initState() {
-    _controller = ScrollController();
-    _controller.addListener(_scrollListener);
-    super.initState();
-  }
+    _controller = ScrollController(
+        initialScrollOffset: widget.target_comment != null
+            ? double.parse(widget.target_comment)
+            : 0);
+    //  _controller.addListener();
 
-  _scrollListener() {
-    /* if (_controller.offset >= _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        print("reach the bottom");
-      });
+    Future.delayed(Duration(milliseconds: 2000), () {
+      if (_controller.hasClients) {
+        _controller.jumpTo(300);
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+
+    super.initState();
+
+    if (widget.notif_id != null) {
+      update_notification = _update_notif(widget.notif_id);
     }
-    if (_controller.offset <= _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {
-      setState(() {
-        if (swipeCount > 0) {
-          // refreshList();
-        }
-        swipeCount++;
-      });
-    }*/
   }
 
   bool _visible = true;
   List comments = [];
-  ScrollController _controller = ScrollController();
+
   int comment_button_status = 1;
+  bool comments_loaded = false;
 
   TextEditingController comment_controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,141 +95,150 @@ class _CommentsState extends State<Comments> {
                         color: Color.fromARGB(255, 255, 255, 255),
                         //get all posts for user
                         child: SingleChildScrollView(
+                            controller: _controller,
                             child: Column(children: [
-                          //logo
-                          Align(
-                            child: Image.asset("assets/images/logo.PNG",
-                                width: 90, height: 30),
-                            alignment: Alignment.topLeft,
-                          ),
+                              //logo
 
-                          Post(
-                            data: widget.post,
-                            isFollowed: widget.isFollowed!,
-                            onSonChanged: (id) {},
-                          ),
-                          SizedBox(height: 10),
+                              Post(
+                                data: widget.post,
+                                isFollowed: widget.isFollowed!,
+                                onSonChanged: (id) {},
+                              ),
+                              SizedBox(height: 10),
 
-                          FutureBuilder(
-                              future: Posts()
-                                  .get_all_post_comments(widget.post["id"]),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Center(child: loader());
-                                } else {
-                                  if (snapshot.data.isNotEmpty &&
-                                      snapshot.data != null &&
-                                      snapshot.data != "failed") {
-                                    comments = snapshot.data;
+                              FutureBuilder(
+                                  future: Posts()
+                                      .get_all_post_comments(widget.post["id"]),
+                                  builder: (context, AsyncSnapshot snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(child: loader());
+                                    } else {
+                                      if (snapshot.data.isNotEmpty &&
+                                          snapshot.data != null &&
+                                          snapshot.data != "failed") {
+                                        comments = snapshot.data;
 
-                                    return ListView.separated(
-                                        shrinkWrap: true,
-                                        itemCount: comments!.length,
-                                        controller: _controller,
-                                        scrollDirection: Axis.vertical,
-                                        primary: false,
-                                        physics: const BouncingScrollPhysics(),
-                                        separatorBuilder: (c, i) {
-                                          return SizedBox(width: 10.sp);
-                                        },
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              GestureDetector(
-                                                  onTap: (() {
-                                                    Get.to(Profile(
-                                                        title:
-                                                            "Room8 - Profile",
-                                                        id: widget.post[
-                                                                "creator_details"]
-                                                            ["creator_id"],
-                                                        profile_img: widget
-                                                                .post["creator_details"][
-                                                            "profile_image_url"],
-                                                        username: widget.post[
-                                                                "creator_details"]
-                                                            ["username"],
-                                                        isFollowed: widget
-                                                                .post["creator_details"]
-                                                            ["isFollow"]));
-                                                  }),
-                                                  child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          bottom: 35),
-                                                      child: ClipOval(
-                                                          child: Container(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: ImageFade(
-                                                          image: NetworkImage(
-                                                              "https://statup.ng/room8/room8/" +
-                                                                  comments[index]
+                                        comments_loaded = true;
+
+                                        return ListView.separated(
+                                            shrinkWrap: true,
+                                            itemCount: comments!.length,
+                                            controller: _controller,
+                                            scrollDirection: Axis.vertical,
+                                            primary: false,
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            separatorBuilder: (c, i) {
+                                              return SizedBox(width: 10.sp);
+                                            },
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  GestureDetector(
+                                                      onTap: (() {
+                                                        Get.to(Profile(
+                                                            notif_id: "",
+                                                            title:
+                                                                "Room8 - Profile",
+                                                            id: widget.post[
+                                                                    "creator_details"]
+                                                                ["creator_id"],
+                                                            profile_img: widget
+                                                                    .post["creator_details"][
+                                                                "profile_image_url"],
+                                                            username: widget
+                                                                    .post["creator_details"]
+                                                                ["username"],
+                                                            isFollowed: widget
+                                                                        .post[
+                                                                    "creator_details"]
+                                                                ["isFollow"]));
+                                                      }),
+                                                      child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  bottom: 35),
+                                                          child: ClipOval(
+                                                              child: Container(
+                                                            height: 30,
+                                                            width: 30,
+                                                            child: ImageFade(
+                                                              image: NetworkImage(
+                                                                  "https://statup.ng/room8/room8/" +
+                                                                      comments[index]
+                                                                              [
+                                                                              "creator_details"]
                                                                           [
-                                                                          "creator_details"]
-                                                                      [
-                                                                      "profile_image_url"]),
-                                                          duration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      900),
-                                                          syncDuration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      150),
+                                                                          "profile_image_url"]),
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          900),
+                                                              syncDuration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          150),
 
-                                                          alignment:
-                                                              Alignment.center,
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
 
-                                                          fit: BoxFit.cover,
-                                                          placeholder:
-                                                              Container(
-                                                            color: const Color(
-                                                                0xFFCFCDCA),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: const Icon(
-                                                                Icons.photo,
-                                                                color: Colors
-                                                                    .white30,
-                                                                size: 128.0),
-                                                          ),
-                                                          loadingBuilder: (context,
-                                                                  progress,
-                                                                  chunkEvent) =>
-                                                              Center(
-                                                                  child:
-                                                                      CircularProgressIndicator(
-                                                            value: progress,
-                                                            strokeWidth: 0.2,
-                                                            color: Colors.white,
-                                                          )),
-
-                                                          // displayed when an error occurs:
-                                                          errorBuilder:
-                                                              (context,
-                                                                      error) =>
+                                                              fit: BoxFit.cover,
+                                                              placeholder:
                                                                   Container(
-                                                            color: const Color(
-                                                                0xFF6F6D6A),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: const Icon(
-                                                                Icons.warning,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        255,
-                                                                        220,
-                                                                        63),
-                                                                size: 128.0),
-                                                          ),
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFFCFCDCA),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: const Icon(
+                                                                    Icons.photo,
+                                                                    color: Colors
+                                                                        .white30,
+                                                                    size:
+                                                                        128.0),
+                                                              ),
+                                                              loadingBuilder: (context,
+                                                                      progress,
+                                                                      chunkEvent) =>
+                                                                  Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(
+                                                                value: progress,
+                                                                strokeWidth:
+                                                                    0.2,
+                                                                color: Colors
+                                                                    .white,
+                                                              )),
+
+                                                              // displayed when an error occurs:
+                                                              errorBuilder:
+                                                                  (context,
+                                                                          error) =>
+                                                                      Container(
+                                                                color: const Color(
+                                                                    0xFF6F6D6A),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: const Icon(
+                                                                    Icons
+                                                                        .warning,
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            220,
+                                                                            63),
+                                                                    size:
+                                                                        128.0),
+                                                              ),
+                                                            ),
+                                                            decoration: BoxDecoration(
                                                                 color: Color
                                                                     .fromARGB(
                                                                         255,
@@ -227,94 +247,97 @@ class _CommentsState extends State<Comments> {
                                                                         172),
                                                                 shape: BoxShape
                                                                     .circle),
-                                                      )))),
-                                              Wrap(children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          left: 7,
-                                                          right: 7,
-                                                          top: 10,
-                                                          bottom: 3),
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              245,
-                                                              253,
-                                                              255),
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
+                                                          )))),
+                                                  Wrap(children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 7,
+                                                                  right: 7,
+                                                                  top: 10,
+                                                                  bottom: 3),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          decoration: BoxDecoration(
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      245,
+                                                                      253,
+                                                                      255),
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
                                                                       .circular(
                                                                           13))),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "@" +
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
                                                                 comments[index][
                                                                         "creator_details"]
                                                                     [
                                                                     "username"],
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          SizedBox(height: 4),
-                                                          Container(
-                                                              child: Text(
-                                                                  comments[
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 4),
+                                                              Container(
+                                                                  child: Text(comments[
                                                                           index]
                                                                       [
                                                                       "content"]))
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 10,
-                                                            bottom: 10),
-                                                        child: Text(
-                                                          TimeFormatter()
-                                                              .readTimestamp(int
-                                                                  .parse(comments[
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    bottom: 10),
+                                                            child: Text(
+                                                              TimeFormatter().readTimestamp(
+                                                                  int.parse(comments[
                                                                           index]
                                                                       [
                                                                       "time"])),
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.grey),
-                                                        ))
-                                                  ],
-                                                )
-                                              ])
-                                            ],
-                                          );
-                                        });
-                                  } else if (snapshot.data == "failed" ||
-                                      snapshot.data == null) {
-                                    return SizedBox();
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                }
-                              }),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ))
+                                                      ],
+                                                    )
+                                                  ])
+                                                ],
+                                              );
+                                            });
+                                      } else if (snapshot.data == "failed" ||
+                                          snapshot.data == null) {
+                                        return SizedBox();
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+                                  }),
 
-                          SizedBox(height: 100)
-                        ])))))),
+                              SizedBox(height: 100)
+                            ])))))),
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -462,5 +485,13 @@ class _CommentsState extends State<Comments> {
                 ))),
       ],
     ));
+  }
+
+  Future<dynamic> _update_notif(notif_id) async {
+    var o = Others().update_notif(notif_id: notif_id);
+
+    print(o.toString());
+
+    return o;
   }
 }

@@ -107,7 +107,6 @@ class Users {
     };
   }
 
-  
   Future<dynamic> updateProfilePic({
     @required File? profile_pic,
   }) async {
@@ -272,6 +271,101 @@ class Users {
     throw (e) {
       print("Error/Exception thrown" + e.toString());
       return "Sorry! could not connect to server. Try again.";
+    };
+  }
+
+  Future<dynamic> get_all_posts() async {
+    String? access_token = user_data["access_token"];
+    print("access_token" + access_token.toString());
+
+    try {
+      //eos.Response response;
+      var dio = eos.Dio();
+
+      var response = await dio.get(baseUrl + 'posts/get_posts',
+          // data: formData,
+          options: eos.Options(
+            headers: {
+              "accept": "application/json",
+              // "Content-Type": "multipart/form-data",
+              "Authorization": access_token.toString()
+            },
+          ));
+
+      //print(response.data.toString());
+      var data = jsonDecode(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (data["code"] == 0) {
+          //network or server error
+          print(data["message"]);
+
+          return [];
+        } else if (data["code"] == 1) {
+          print("posts retrieved");
+          return data["data"];
+        } else {
+          return [];
+        }
+      }
+    } catch (e) {
+      print("Error/Exception caught" + e.toString());
+      return "failed";
+    }
+    throw (e) {
+      print("Error/Exception thrown" + e.toString());
+      return "failed";
+    };
+  }
+
+  Future<dynamic> get_all_prefs() async {
+    //  String? access_token = user_data["access_token"];
+    // print("access_token" + access_token.toString());
+
+    try {
+      //eos.Response response;
+      var dio = eos.Dio();
+
+      var response = await dio.get(baseUrl + 'members/get_all_prefs',
+          // data: formData,
+
+          options: eos.Options(
+            headers: {
+              "accept": "application/json",
+              // "Content-Type": "multipart/form-data",
+              // "Authorization": access_token.toString()
+            },
+          ));
+
+      //print(response.data.toString());
+      var data = jsonDecode(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (data["code"] == 0) {
+          //network or server error
+          print(data["message"]);
+
+          return [];
+        } else if (data["code"] == 1) {
+          //store details of user in storage to display on user screen
+          Hive.box("room8").put("prefs", data["prefs"]);
+
+          print(data["prefs"].toString());
+
+          return data["prefs"];
+        } else if (data["code"] == 0) {
+          print("No prefs retrieved");
+
+          return [];
+        } else {
+          return [];
+        }
+      }
+    } catch (e) {
+      print("Error/Exception caught" + e.toString());
+      return "failed";
+    }
+    throw (e) {
+      print("Error/Exception thrown" + e.toString());
+      return "failed";
     };
   }
 }

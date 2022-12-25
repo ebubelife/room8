@@ -26,7 +26,7 @@ class HashTagDetector {
       text: TextSpan(
         style: TextStyle(
             color: Color.fromARGB(255, 0, 0, 0),
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w400),
         children: [TextSpan(text: split.first)]..addAll(hashtags
             .map((text) => text.contains("#")
@@ -34,13 +34,13 @@ class HashTagDetector {
                     text: text,
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w400))
                 : TextSpan(
                     text: text,
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w400)))
             .toList()),
       ),

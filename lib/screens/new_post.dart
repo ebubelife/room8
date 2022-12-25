@@ -13,7 +13,8 @@ import 'package:roomnew/services/auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-
+import 'package:video_player/video_player.dart';
+import 'package:video_trimmer/video_trimmer.dart';
 import '../services/posts.dart';
 import 'landing.dart';
 
@@ -46,17 +47,22 @@ class _NewPostState extends State<NewPost> {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back,
-                  color: Color.fromARGB(255, 0, 0, 0)),
+              icon: SvgPicture.asset(
+                "assets/svg/back-arrow-svgrepo-com.svg",
+                color: Color.fromARGB(255, 235, 29, 2),
+                height: 21,
+                width: 21,
+                fit: BoxFit.scaleDown,
+              ),
               onPressed: () => Get.back()
               // open side menu},
               ),
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 255, 237, 179).withOpacity(0.3),
           elevation: 0.0,
           // ignore: prefer_const_literals_to_create_immutables
 
           title: const Text(
-            "Create Post",
+            "Add To The Room",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -137,7 +143,7 @@ class _NewPostState extends State<NewPost> {
               Container(
                   height: double.maxFinite,
                   width: double.maxFinite,
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: Color.fromARGB(255, 255, 237, 179).withOpacity(0.3),
                   child: SafeArea(
                       child: Container(
                           padding: EdgeInsets.only(top: 0, left: 20, right: 20),
@@ -150,31 +156,6 @@ class _NewPostState extends State<NewPost> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 54,
-                                      width: 54,
-                                      decoration: BoxDecoration(
-                                          color: Color.fromARGB(
-                                              255, 173, 173, 172),
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  "https://statup.ng/room8/room8/" +
-                                                      user_data[
-                                                          "profile_image_url"]),
-                                              fit: BoxFit.cover),
-                                          shape: BoxShape.circle),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "@" + user_data["username"],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(width: 5),
-                                  ],
-                                ),
                                 Container(
                                     margin: EdgeInsets.only(top: 10),
                                     decoration: BoxDecoration(
@@ -184,19 +165,33 @@ class _NewPostState extends State<NewPost> {
                                             width: 1,
                                             color: Color.fromARGB(
                                                 255, 224, 224, 224))),
-                                    child: TextField(
-                                      controller: post_controller,
-                                      maxLength: 180,
-                                      decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.all(6),
-                                          labelText: 'Want to add to the room?',
-                                          alignLabelWithHint: true,
-                                          floatingLabelAlignment:
-                                              FloatingLabelAlignment.start),
-                                      keyboardType: TextInputType.multiline,
-                                      minLines: 10, // <-- SEE HERE
-                                      maxLines: 20, // <-- SEE HERE
-                                    )),
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15))),
+                                        child: TextField(
+                                          controller: post_controller,
+                                          cursorColor:
+                                              Color.fromARGB(255, 233, 87, 3),
+                                          maxLength: 180,
+
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.all(6),
+                                              // counter: SizedBox.shrink(),
+                                              labelText:
+                                                  'Want to add to the room?',
+                                              labelStyle:
+                                                  TextStyle(color: Colors.grey),
+                                              alignLabelWithHint: true,
+                                              floatingLabelAlignment:
+                                                  FloatingLabelAlignment.start),
+                                          keyboardType: TextInputType.multiline,
+
+                                          minLines: 10, // <-- SEE HERE
+                                          maxLines: 20, // <-- SEE HERE
+                                        ))),
                                 Container(
                                     height: 150,
                                     width: double.maxFinite,
@@ -275,9 +270,188 @@ class _NewPostState extends State<NewPost> {
                         "Photos",
                         style:
                             TextStyle(color: Color.fromARGB(255, 56, 56, 56)),
-                      )
+                      ),
+                      const SizedBox(width: 20),
+                      IconButton(
+                        onPressed: () async {
+                          ImagePicker picker = ImagePicker();
+                          XFile? file = await picker.pickVideo(
+                              source: ImageSource.gallery);
+                          if (file != null && file != null) {
+                            if (file != null) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return TrimmerView(File(file.path));
+                              }));
+                            }
+                          }
+                        },
+                        icon: SvgPicture.asset(
+                          "assets/svg/Video.svg",
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        "Videos",
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 56, 56, 56)),
+                      ),
                     ]),
                   ))
             ])));
+  }
+}
+
+class TrimmerView extends StatefulWidget {
+  final File file;
+
+  TrimmerView(this.file);
+
+  @override
+  _TrimmerViewState createState() => _TrimmerViewState();
+}
+
+class _TrimmerViewState extends State<TrimmerView> {
+  final Trimmer _trimmer = Trimmer();
+
+  double _startValue = 0.0;
+  double _endValue = 0.0;
+  String? savedFile;
+  bool _isPlaying = false;
+  bool _progressVisibility = false;
+
+  Future<String?> _saveVideo() async {
+    setState(() {
+      _progressVisibility = true;
+    });
+
+    String? _value;
+
+    await _trimmer
+        .saveTrimmedVideo(
+      startValue: _startValue,
+      endValue: _endValue,
+      onSave: (outputPath) {
+        setState(() {
+          print("greeee " + outputPath!);
+          _progressVisibility = false;
+          _value = outputPath;
+
+          savedFile = outputPath;
+          Hive.box("room8").put("saved-clip", outputPath);
+        });
+      },
+    )
+        .then((value) {
+      // _value = value;
+    });
+
+    return _value;
+  }
+
+  void _loadVideo() {
+    _trimmer.loadVideo(videoFile: widget.file);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadVideo();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+        // title: Text("Crop Video"),
+      ),
+      floatingActionButton: Container(
+        height: 60.0,
+        width: 60.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: _progressVisibility
+                ? null
+                : () async {
+                    _saveVideo().then((outputPath) {
+                      String retrived_clip =
+                          Hive.box("room8").get("saved-clip");
+                      print('OUTPUT PATHhhh: $retrived_clip');
+                      final snackBar =
+                          SnackBar(content: Text('Video Saved successfully'));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        snackBar,
+                      );
+
+                      Get.back();
+                    });
+                  },
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            child: Icon(Icons.check,
+                size: 35, color: Color.fromARGB(255, 0, 0, 0)),
+          ),
+        ),
+      ),
+      body: Builder(
+        builder: (context) => Container(
+          padding: EdgeInsets.only(bottom: 40.0),
+          color: Colors.black,
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Visibility(
+                visible: _progressVisibility,
+                child: LinearProgressIndicator(
+                  backgroundColor: Colors.red,
+                ),
+              ),
+              Expanded(
+                child: VideoViewer(trimmer: _trimmer),
+              ),
+              Center(
+                child: TrimViewer(
+                  trimmer: _trimmer,
+                  viewerHeight: 50.0,
+                  viewerWidth: MediaQuery.of(context).size.width,
+                  maxVideoLength: const Duration(seconds: 60),
+                  onChangeStart: (value) => _startValue = value,
+                  onChangeEnd: (value) => _endValue = value,
+                  onChangePlaybackState: (value) =>
+                      setState(() => _isPlaying = value),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              TextButton(
+                child: _isPlaying
+                    ? Icon(
+                        Icons.pause,
+                        size: 40.0,
+                        color: Colors.white,
+                      )
+                    : Icon(
+                        Icons.play_arrow,
+                        size: 40.0,
+                        color: Colors.white,
+                      ),
+                onPressed: () async {
+                  bool playbackState = await _trimmer.videoPlaybackControl(
+                    startValue: _startValue,
+                    endValue: _endValue,
+                  );
+                  setState(() {
+                    _isPlaying = playbackState;
+                  });
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

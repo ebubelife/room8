@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'dart:math' as math;
 import 'package:roomnew/components/form_fields.dart';
 import 'package:roomnew/components/loading.dart';
@@ -10,6 +11,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:roomnew/screens/login.dart';
 import 'package:roomnew/services/auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cool_dropdown/cool_dropdown.dart';
+import 'package:roomnew/services/users.dart';
+
+import '../components/lists.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key, required this.title});
@@ -33,6 +38,23 @@ class _SignupState extends State<Signup> {
   bool obscure_password = true, obscure_repeat_password = true;
   bool profile_pic_selected = true;
   List<File> selected_image = [];
+  List preferences = itemLists().preferences();
+  List countries = itemLists().countries();
+  List gender = itemLists().gender();
+  List states = itemLists().states();
+  late Future<dynamic> future;
+
+  String sel_preference = "";
+  String sel_gender = "";
+  String sel_countery = "nigeria";
+  String sel_state = "Lagos";
+
+  @override
+  void initState() {
+    future = get_prefs();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +90,16 @@ class _SignupState extends State<Signup> {
                         ),
                         child: SingleChildScrollView(
                           child: Column(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
+                              Center(
+                                  child: SizedBox(
                                 child: Image.asset("assets/images/logo.PNG",
                                     width: 80, height: 40.sp),
-                              ),
-                              Transform.rotate(
+                              )),
+                              Center(
+                                  child: Transform.rotate(
                                 angle: 45 * math.pi / 180,
                                 child: Container(
                                     width: 70,
@@ -105,7 +131,6 @@ class _SignupState extends State<Signup> {
                                                         await picker.pickImage(
                                                             source: ImageSource
                                                                 .gallery,
-                                                                
                                                             imageQuality: 50);
                                                     if (file != null) {
                                                       setState(() {
@@ -175,7 +200,7 @@ class _SignupState extends State<Signup> {
                                                                           16)))))))
                                             ],
                                           )),
-                              ),
+                              )),
                               CustomField(
                                   hint: "Username",
                                   controller: username_controller,
@@ -218,6 +243,154 @@ class _SignupState extends State<Signup> {
                                 controller: confirm_password_controller,
                                 obscureText: obscure_repeat_password,
                               ),
+                              SizedBox(height: 15),
+                              Text("Select what best describes you?"),
+                              SizedBox(height: 2),
+                              Container(
+                                padding: EdgeInsets.only(
+                                    top: 11, bottom: 15, left: 5, right: 10),
+                                width: double.maxFinite,
+                                child: CoolDropdown(
+                                  dropdownList: preferences,
+
+                                  unselectedItemTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
+                                  resultTS: TextStyle(fontSize: 15),
+
+                                  //resultWidth: double.maxFinite,
+                                  onChange: (value) {
+                                    setState(() {
+                                      sel_preference = value["value"];
+                                    });
+                                  },
+                                  defaultValue: preferences[0],
+                                  // placeholder: 'insert...',
+                                ),
+                                decoration: BoxDecoration(
+                                    // color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(
+                                    top: 5, bottom: 20, left: 5, right: 10),
+                                width: double.maxFinite,
+                                child: CoolDropdown(
+                                  dropdownList: gender,
+                                  dropdownHeight: 200,
+                                  unselectedItemTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
+                                  resultTS: TextStyle(fontSize: 15),
+
+                                  //resultWidth: double.maxFinite,
+                                  onChange: (value) {
+                                    setState(() {
+                                      sel_gender = value["value"];
+                                    });
+                                  },
+                                  defaultValue: gender[0],
+                                  // placeholder: 'insert...',
+                                ),
+                                decoration: BoxDecoration(
+                                    // color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(
+                                    top: 5, bottom: 20, left: 5, right: 10),
+                                width: double.maxFinite,
+                                child: CoolDropdown(
+                                  dropdownList: countries,
+
+                                  unselectedItemTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
+                                  resultTS: TextStyle(fontSize: 15),
+
+                                  //resultWidth: double.maxFinite,
+                                  onChange: (value) {
+                                    setState(() {
+                                      sel_countery = value["value"];
+
+                                      print(sel_countery);
+                                    });
+                                  },
+                                  defaultValue: countries[126],
+                                  // placeholder: 'insert...',
+                                ),
+                                decoration: BoxDecoration(
+                                    // color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                              ),
+                              sel_countery == "nigeria"
+                                  ? Container(
+                                      padding: EdgeInsets.only(
+                                          top: 5,
+                                          bottom: 20,
+                                          left: 5,
+                                          right: 10),
+                                      width: double.maxFinite,
+                                      child: CoolDropdown(
+                                        dropdownList: states,
+
+                                        unselectedItemTS: TextStyle(
+                                            fontSize: 13,
+                                            color: Color.fromARGB(
+                                                255, 68, 68, 68)),
+                                        resultTS: TextStyle(fontSize: 15),
+
+                                        //resultWidth: double.maxFinite,
+                                        onChange: (value) {
+                                          setState(() {
+                                            sel_state = value["value"];
+                                          });
+                                        },
+                                        defaultValue: states[24],
+                                        // placeholder: 'insert...',
+                                      ),
+                                      decoration: BoxDecoration(
+                                          // color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              spreadRadius: 1,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 1),
+                                            ),
+                                          ],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                    )
+                                  : SizedBox(),
                               Container(
                                 width: double.maxFinite,
                                 margin: EdgeInsets.only(top: 5),
@@ -249,7 +422,7 @@ class _SignupState extends State<Signup> {
                                             text:
                                                 'By continuing, you agree to our '),
                                         TextSpan(
-                                            text: 'Terms of Service ',
+                                            text: 'Community Guidelines ',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             )),
@@ -268,13 +441,26 @@ class _SignupState extends State<Signup> {
                               ),
                               GestureDetector(
                                   onTap: (() {
-                                    if (username_controller.text.isNotEmpty &&
+                                    if (sel_countery != "" &&
+                                        sel_gender != "" &&
+                                        sel_gender != "gender" &&
+                                        sel_preference != "" &&
+                                        sel_preference != "pref" &&
+                                        (sel_countery == "nigeria" &&
+                                                sel_state != "" ||
+                                            sel_countery != "nigeria" &&
+                                                sel_state == "") &&
+                                        username_controller.text.isNotEmpty &&
                                         email_controller.text.isNotEmpty &&
                                         password_controller.text.isNotEmpty) {
                                       if (selected_image.isNotEmpty) {
                                         loading2("Loading", context);
                                         Auth()
                                             .signup(
+                                              state: sel_state,
+                                                country: sel_countery,
+                                                gender: sel_gender,
+                                                prefs: sel_preference,
                                                 username:
                                                     username_controller.text,
                                                 email: email_controller.text,
@@ -420,35 +606,44 @@ class _SignupState extends State<Signup> {
                                     Get.to(
                                         Login(title: "Welcome Back - Room8"));
                                   },
-                                  child: Container(
-                                      margin: EdgeInsets.only(
-                                          top: 8.sp, bottom: 10.sp),
-                                      child: RichText(
-                                        softWrap: true,
-                                        maxLines: 2,
-                                        text: TextSpan(
-                                          // Note: Styles for TextSpans must be explicitly defined.
-                                          // Child text spans will inherit styles from parent
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                          ),
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                                text: 'Joined us before? ',
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                        255, 77, 77, 77),
-                                                    fontSize: 14)),
-                                            TextSpan(
-                                                text: 'Login ',
-                                                style: const TextStyle()),
-                                          ],
-                                        ),
-                                      ))),
+                                  child: Center(
+                                      child: Container(
+                                          margin: EdgeInsets.only(
+                                              top: 8.sp, bottom: 10.sp),
+                                          child: RichText(
+                                            softWrap: true,
+                                            maxLines: 2,
+                                            text: TextSpan(
+                                              // Note: Styles for TextSpans must be explicitly defined.
+                                              // Child text spans will inherit styles from parent
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                    text: 'Joined us before? ',
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromARGB(
+                                                            255, 77, 77, 77),
+                                                        fontSize: 14)),
+                                                TextSpan(
+                                                    text: 'Login ',
+                                                    style: const TextStyle()),
+                                              ],
+                                            ),
+                                          )))),
                             ],
                           ),
                         ))))));
+  }
+
+  Future<dynamic> get_prefs() async {
+    var data = Users().get_all_prefs();
+    var pref_cached = Hive.box("room8").get("prefs");
+
+    return data;
   }
 }

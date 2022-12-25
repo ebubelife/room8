@@ -22,6 +22,7 @@ import '../components/post.dart';
 import '../components/timeago.dart';
 import '../services/posts.dart';
 import 'notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MainHomeController {
   late void Function() scrollUp;
@@ -83,6 +84,64 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
 
     //save_firebase_token
     _save_firebase_token();
+
+    //Firebase notification
+
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'Orders Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high, showBadge: true,
+    );
+
+    void handleMessage(RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            iOS: const IOSNotificationDetails(
+              sound: 'default',
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              enableVibration: true,
+              playSound: true,
+              icon: 'ic_launcher',
+            ),
+          ),
+        );
+      }
+    }
+
+    try {
+      FirebaseMessaging.instance
+          .getInitialMessage()
+          .then((RemoteMessage? message) {});
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        handleMessage(message);
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        // handleMessage(message);
+      });
+    } catch (e) {
+      print("No internet connection");
+    }
+
     super.initState();
   }
 
@@ -90,7 +149,7 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-    print("GOAT  ${user_data["id"]}");
+    // print("GOAT  ${user_data["id"]}");
     List<Widget> _pages = [
       Notifications(
         title: "Room8 Social - notifications",
@@ -107,6 +166,7 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
         id: user_data["id"],
         profile_img: "/",
         username: "",
+        notif_id: "",
         isFollowed: true,
       ),
     ];

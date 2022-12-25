@@ -13,6 +13,10 @@ class Auth {
     @required String? email,
     @required String? password,
     @required File? profile_pic,
+    @required String? gender,
+    @required String? country,
+    @required String? prefs,
+    @required String? state,
   }) async {
     try {
       var dio = eos.Dio();
@@ -21,6 +25,10 @@ class Auth {
         'username': username!.trim(),
         'email': email!.trim().toLowerCase(),
         'password': password,
+        'gender': gender!.trim(),
+        'preference': prefs!.trim().toLowerCase(),
+        'country': country!.trim().toLowerCase(),
+        'state': state,
       });
 
       if (profile_pic != null) {
@@ -69,7 +77,7 @@ class Auth {
           //invalid email
           return "Please upload an image less than 10 megabytes!";
         } else if (data["code"] == 200) {
-          Hive.box("room8").put("loggedIn", true);
+        //  Hive.box("room8").put("loggedIn", true);
           return 200;
         } else {
           print(response.data.toString());
@@ -236,7 +244,4 @@ class Auth {
       return "Sorry! could not connect to server. Try again.";
     };
   }
-
-  
-
 }
