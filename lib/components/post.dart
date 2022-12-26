@@ -60,7 +60,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
       isFollow = isFollow;
 
     return Container(
-        margin: EdgeInsets.only(bottom: 0, top: 2),
+        margin: EdgeInsets.only(bottom: 0, top: 0),
         child: Column(
           children: [
             SizedBox(height: 5),
@@ -467,7 +467,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                             width: double.maxFinite,
                             child: CarouselSlider(
                               options: CarouselOptions(
-                                height: 400.0,
+                                height: 450.0,
                                 initialPage: 0,
                                 //aspectRatio: 16 / 9,
                                 autoPlay: true,
@@ -494,7 +494,7 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                                           ));
                                         }),
                                         child: Container(
-                                          height: Get.height * 0.8,
+                                          height: Get.height * 1.0,
                                           width:
                                               MediaQuery.of(context).size.width,
                                           margin: EdgeInsets.symmetric(
@@ -767,7 +767,13 @@ class _PostState extends State<Post> with AutomaticKeepAliveClientMixin {
                               ),
                             ),
                             Spacer(),
-                            Image.asset("assets/images/gift.png")
+                            SvgPicture.asset(
+                              "assets/svg/gift-svgrepo-com(1).svg",
+                              height: 21.sp,
+                              width: 21.sp,
+                              fit: BoxFit.scaleDown,
+                              //  color: Color.fromARGB(255, 0, 0, 0),
+                            ),
                           ],
                         )),
                   ],

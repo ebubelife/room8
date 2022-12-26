@@ -729,7 +729,9 @@ class _ProfileState extends State<Profile> {
                                 : widget.username,
                             maxLines: 1,
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
                           )),
                         ),
                         SizedBox(height: 15),
@@ -751,6 +753,7 @@ class _ProfileState extends State<Profile> {
                                             Text(
                                               follwowingCount!,
                                               style: TextStyle(
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 19),
                                             ),
@@ -779,6 +782,7 @@ class _ProfileState extends State<Profile> {
                                               follwowersCount!,
                                               style: TextStyle(
                                                   fontSize: 19,
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             SizedBox(
@@ -806,7 +810,7 @@ class _ProfileState extends State<Profile> {
                                 physics: const BouncingScrollPhysics(),
                                 separatorBuilder: (c, i) {
                                   return SizedBox(
-                                    height: 10.sp,
+                                    height: 2.sp,
                                   );
                                 },
                                 itemBuilder: (BuildContext context, int index) {

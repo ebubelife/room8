@@ -172,10 +172,13 @@ class _NewPostState extends State<NewPost> {
                                                 Radius.circular(15))),
                                         child: TextField(
                                           controller: post_controller,
+
                                           cursorColor:
                                               Color.fromARGB(255, 233, 87, 3),
                                           maxLength: 180,
-
+                                          style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 20, 20, 20)),
                                           decoration: InputDecoration(
                                               border: InputBorder.none,
                                               contentPadding: EdgeInsets.all(6),
@@ -333,7 +336,6 @@ class _TrimmerViewState extends State<TrimmerView> {
       endValue: _endValue,
       onSave: (outputPath) {
         setState(() {
-          print("greeee " + outputPath!);
           _progressVisibility = false;
           _value = outputPath;
 

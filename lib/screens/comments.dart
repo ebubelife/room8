@@ -268,12 +268,6 @@ class _CommentsState extends State<Comments> {
                                                               EdgeInsets.all(
                                                                   10),
                                                           decoration: BoxDecoration(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      245,
-                                                                      253,
-                                                                      255),
                                                               borderRadius: BorderRadius
                                                                   .all(Radius
                                                                       .circular(
@@ -292,6 +286,8 @@ class _CommentsState extends State<Comments> {
                                                                     [
                                                                     "username"],
                                                                 style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold),
@@ -299,10 +295,13 @@ class _CommentsState extends State<Comments> {
                                                               SizedBox(
                                                                   height: 4),
                                                               Container(
-                                                                  child: Text(comments[
-                                                                          index]
-                                                                      [
-                                                                      "content"]))
+                                                                  child: Text(
+                                                                comments[index]
+                                                                    ["content"],
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ))
                                                             ],
                                                           ),
                                                         ),

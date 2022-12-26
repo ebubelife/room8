@@ -47,7 +47,7 @@ class _UserPostState extends State<UserPost> {
     String? profile_img_url = user_data["profile_image_url"];
     List<dynamic> media_files = widget.data["media"];
     return Container(
-        margin: EdgeInsets.only(top: 5, left: 3, right: 3),
+        margin: EdgeInsets.only(top: 0, left: 3, right: 3),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -116,7 +116,9 @@ class _UserPostState extends State<UserPost> {
                       Text(
                         widget.data["creator_details"]["username"],
                         style: TextStyle(
-                            fontWeight: FontWeight.w800, fontSize: 20),
+                            color: Colors.black,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20),
                       ),
                       SizedBox(
                         width: 10,
@@ -355,11 +357,11 @@ class _UserPostState extends State<UserPost> {
               SizedBox(height: 3),
               widget.data["post_type"] == "IMAGE"
                   ? Container(
-                      height: 320,
+                      height: 450,
                       width: double.maxFinite,
                       child: CarouselSlider(
                         options: CarouselOptions(
-                          height: 400.0,
+                          height: 450.0,
                           initialPage: 0,
                           //aspectRatio: 16 / 9,
                           autoPlay: true,
@@ -387,6 +389,7 @@ class _UserPostState extends State<UserPost> {
                                   }),
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
+                                    height: Get.height * 1.0,
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 1.0),
                                     child: ImageFade(
@@ -574,8 +577,11 @@ class _UserPostState extends State<UserPost> {
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
                   SizedBox(width: 3),
-                  Text(NumberFormat.compact()
-                      .format(int.parse(widget.data["views_count"]))),
+                  Text(
+                    NumberFormat.compact()
+                        .format(int.parse(widget.data["views_count"])),
+                    style: TextStyle(color: Color.fromARGB(255, 92, 92, 92)),
+                  ),
                   SizedBox(width: 10),
                   GestureDetector(
                     onTap: () {
@@ -593,7 +599,8 @@ class _UserPostState extends State<UserPost> {
                     ),
                   ),
                   SizedBox(width: 3),
-                  Text(widget.data["comments_count"]),
+                  Text(widget.data["comments_count"],
+                      style: TextStyle(color: Color.fromARGB(255, 92, 92, 92))),
                   SizedBox(width: 10),
                   SvgPicture.asset(
                     "assets/svg/share.svg",
@@ -603,7 +610,13 @@ class _UserPostState extends State<UserPost> {
                     color: Color.fromARGB(255, 0, 0, 0),
                   ),
                   Spacer(),
-                  Image.asset("assets/images/gift.png"),
+                  SvgPicture.asset(
+                    "assets/svg/gift-svgrepo-com(1).svg",
+                    height: 21.sp,
+                    width: 21.sp,
+                    fit: BoxFit.scaleDown,
+                    //  color: Color.fromARGB(255, 0, 0, 0),
+                  ),
                   SizedBox(
                     width: 10,
                   ),

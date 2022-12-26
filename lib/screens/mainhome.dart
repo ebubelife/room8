@@ -258,7 +258,7 @@ class _MainHomeState extends State<MainHome>
                                               physics:
                                                   const BouncingScrollPhysics(),
                                               separatorBuilder: (c, i) {
-                                                return SizedBox(width: 10.sp);
+                                                return SizedBox(width: 1.sp);
                                               },
                                               itemBuilder:
                                                   (BuildContext context,
