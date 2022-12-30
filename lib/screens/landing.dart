@@ -179,7 +179,11 @@ class _LandingState extends State<Landing> with AutomaticKeepAliveClientMixin {
           child: FittedBox(
             child: FloatingActionButton(
               onPressed: () {
-                Get.to(NewPost(title: "Room8 Social - Post"));
+                Get.to(NewPost(
+                    title: "Room8 Social - Post",
+                    selected_clip: "",
+                    post_text: "",
+                    selected_video: ""));
               },
               backgroundColor: Color.fromARGB(255, 0, 0, 0),
               child: Icon(Icons.add, size: 35, color: Colors.white),

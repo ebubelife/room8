@@ -40,6 +40,7 @@ class Others {
           Hive.box("room8").put("all_notifs", data["data"]);
           return data["data"];
         } else {
+          Hive.box("room8").put("all_notifs", []);
           return [];
         }
       }

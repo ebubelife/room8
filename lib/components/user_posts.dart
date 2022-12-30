@@ -14,10 +14,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import '../components/toast.dart';
 import 'package:hive/hive.dart';
+import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:roomnew/components/loading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -40,6 +41,26 @@ class _UserPostState extends State<UserPost> {
   bool? text_expand = false;
   int? max_lines_for_post;
   bool? isFollow;
+  VideoPlayerController? _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Create and store the VideoPlayerController. The VideoPlayerController
+    // offers several different constructors to play videos from assets, files,
+    // or the internet.
+
+    if (widget.data["post_type"] == "VIDEO") {
+      _controller = VideoPlayerController.network(
+        'https://statup.ng/room8/room8/media/posts/videos/' +
+            widget.data["media"][0],
+      );
+
+      _initializeVideoPlayerFuture = _controller!.initialize();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -442,58 +463,41 @@ class _UserPostState extends State<UserPost> {
                       ? Text("")
                       : media_files.isNotEmpty &&
                               widget.data["post_type"] == "VIDEO"
-                          ? Container(
-                              height: 300.sp,
-                              width: double.maxFinite,
-                              child: FutureBuilder(
-                                future: VideoThumbnail.thumbnailData(
-                                  video:
-                                      "https://statup.ng/room8/room8/media/posts/videos/sword-fight-scene.mp4",
-                                  imageFormat: ImageFormat.JPEG,
-                                  maxWidth: 128,
-                                  quality: 100,
-                                ),
-                                builder:
-                                    (BuildContext context, AsyncSnapshot snap) {
-                                  if (!snap.hasData) {
-                                    return SizedBox(
-                                      height: 250,
-                                      child: loader(),
-                                    );
-                                  } else {
-                                    return Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.memory(
-                                            snap.data,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                            height: 320,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => {},
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                              color:
-                                                  Colors.white.withOpacity(.3),
-                                            ),
-                                            padding: const EdgeInsets.all(8),
-                                            child: Icon(Icons.play_arrow,
-                                                color: Colors.red, size: 40),
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  }
-                                },
-                              ))
-                          : SizedBox(),
+                          ? VisibilityDetector(
+                              key: Key('my_widget'),
+                              onVisibilityChanged: (VisibilityInfo info) {
+                                if (info.visibleFraction == 1.0) {
+                                  _controller!.play();
+                                } else {
+                                  _controller!.pause();
+                                }
+                              },
+                              child: Container(
+                                  height: 300,
+                                  child: FutureBuilder(
+                                    future: _initializeVideoPlayerFuture,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        // If the VideoPlayerController has finished initialization, use
+                                        // the data it provides to limit the aspect ratio of the video.
+                                        return AspectRatio(
+                                          aspectRatio:
+                                              _controller!.value.aspectRatio *
+                                                  9,
+                                          // Use the VideoPlayer widget to display the video.
+                                          child: VideoPlayer(_controller!),
+                                        );
+                                      } else {
+                                        // If the VideoPlayerController is still initializing, show a
+                                        // loading spinner.
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                    },
+                                  )))
+                          : Container(),
               SizedBox(
                 height: 3,
               ),

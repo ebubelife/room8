@@ -28,50 +28,50 @@ class CustomField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
+        // color: Colors.white,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 13),
-              child: Text(label ?? "", style: TextStyle(color: Colors.black)),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 13),
+          child: Text(label ?? "", style: TextStyle(color: Colors.black)),
+        ),
+        const SizedBox(height: 2),
+        TextField(
+          controller: controller,
+          cursorColor: Color.fromARGB(255, 245, 57, 0),
+          obscureText: obscureText ?? false,
+          keyboardType: type ?? TextInputType.text,
+          maxLength: maxL,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              fontSize: 12,
+              height: 1.5,
+              // color: white.withOpacity(.7),
             ),
-            const SizedBox(height: 2),
-            TextField(
-              controller: controller,
-              cursorColor: Color.fromARGB(255, 245, 57, 0),
-              obscureText: obscureText ?? false,
-              keyboardType: type ?? TextInputType.text,
-              maxLength: maxL,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: TextStyle(
-                  fontSize: 12,
-                  height: 1.5,
-                  // color: white.withOpacity(.7),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(
-                      color: Color.fromARGB(255, 109, 10, 3).withOpacity(0.3),
-                      width: 1),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                suffixIcon: suffixIcon,
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: Colors.white),
             ),
-          ],
-        ));
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(
+                  color: Color.fromARGB(255, 109, 10, 3).withOpacity(0.3),
+                  width: 1),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            suffixIcon: suffixIcon,
+          ),
+        ),
+      ],
+    ));
   }
 }
 

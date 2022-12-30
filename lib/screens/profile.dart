@@ -474,9 +474,9 @@ class _ProfileState extends State<Profile> {
                                                                 color: Color
                                                                     .fromARGB(
                                                                         255,
-                                                                        89,
-                                                                        180,
-                                                                        255),
+                                                                        0,
+                                                                        0,
+                                                                        0),
                                                                 fontSize: 18,
                                                                 fontWeight:
                                                                     FontWeight
@@ -488,8 +488,12 @@ class _ProfileState extends State<Profile> {
                                                                   MaterialStateProperty
                                                                       .all(
                                                                 BorderSide(
-                                                                    color: Colors
-                                                                        .blue,
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            0,
+                                                                            0,
+                                                                            0),
                                                                     width: 2),
                                                               ),
                                                               backgroundColor:
@@ -514,6 +518,9 @@ class _ProfileState extends State<Profile> {
                                                         Expanded(
                                                           child: TextButton(
                                                             onPressed: () {
+                                                              print("user_id " +
+                                                                  user_data[
+                                                                      "id"]);
                                                               loading2(
                                                                   "Loading",
                                                                   context);
@@ -560,12 +567,13 @@ class _ProfileState extends State<Profile> {
                                                             ),
                                                             style: ButtonStyle(
                                                               backgroundColor:
-                                                                  MaterialStateProperty.all(
-                                                                      Color.fromARGB(
-                                                                          255,
-                                                                          106,
-                                                                          187,
-                                                                          253)),
+                                                                  MaterialStateProperty
+                                                                      .all(Color
+                                                                          .fromARGB(
+                                                                              255,
+                                                                              0,
+                                                                              0,
+                                                                              0)),
                                                             ),
                                                           ),
                                                         ),
@@ -614,9 +622,9 @@ class _ProfileState extends State<Profile> {
                                                                 color: Color
                                                                     .fromARGB(
                                                                         255,
-                                                                        89,
-                                                                        180,
-                                                                        255),
+                                                                        0,
+                                                                        0,
+                                                                        0),
                                                                 fontSize: 18,
                                                                 fontWeight:
                                                                     FontWeight
@@ -629,7 +637,7 @@ class _ProfileState extends State<Profile> {
                                                                       .all(
                                                                 BorderSide(
                                                                     color: Colors
-                                                                        .blue,
+                                                                        .black,
                                                                     width: 2),
                                                               ),
                                                               backgroundColor:
@@ -699,12 +707,13 @@ class _ProfileState extends State<Profile> {
                                                             ),
                                                             style: ButtonStyle(
                                                               backgroundColor:
-                                                                  MaterialStateProperty.all(
-                                                                      Color.fromARGB(
-                                                                          255,
-                                                                          106,
-                                                                          187,
-                                                                          253)),
+                                                                  MaterialStateProperty
+                                                                      .all(Color
+                                                                          .fromARGB(
+                                                                              255,
+                                                                              0,
+                                                                              0,
+                                                                              0)),
                                                             ),
                                                           ),
                                                         ),
@@ -719,7 +728,7 @@ class _ProfileState extends State<Profile> {
                                     : SizedBox(),
                               ],
                             )),
-                        SizedBox(height: 12),
+                        SizedBox(height: 5),
                         Container(
                           width: double.maxFinite,
                           child: Center(
@@ -734,7 +743,7 @@ class _ProfileState extends State<Profile> {
                                 fontSize: 20),
                           )),
                         ),
-                        SizedBox(height: 15),
+                        SizedBox(height: 8),
                         Container(
                             padding: EdgeInsets.only(left: 40, right: 40),
                             child: Center(
@@ -800,7 +809,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ],
                             ))),
-                        SizedBox(height: 7),
+                        SizedBox(height: 1),
                         Container(
                             child: ListView.separated(
                                 shrinkWrap: true,
@@ -1210,10 +1219,12 @@ class _ProfileState extends State<Profile> {
                                     : widget.username,
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black),
                               )),
                             ),
-                            SizedBox(height: 15),
+                            SizedBox(height: 8),
                             Container(
                                 padding: EdgeInsets.only(left: 40, right: 40),
                                 child: Center(
@@ -1228,7 +1239,8 @@ class _ProfileState extends State<Profile> {
                                               ? user_data["follower_count"]
                                               : follwowingCount,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
                                         ),
                                         SizedBox(
                                           width: 2,
@@ -1247,9 +1259,10 @@ class _ProfileState extends State<Profile> {
                                         Text(
                                           widget.id == user_data["id"]
                                               ? user_data["following_count"]
-                                              : follwowersCount,
+                                              : follwowingCount,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
                                         ),
                                         SizedBox(
                                           width: 2,

@@ -317,6 +317,50 @@ class Users {
     };
   }
 
+  Future<dynamic> get_selected_users() async {
+    //get selected members to be followed by new user
+    String? access_token = user_data["access_token"];
+    print("access_token" + access_token.toString());
+
+    try {
+      //eos.Response response;
+      var dio = eos.Dio();
+
+      var response = await dio.get(baseUrl + 'members/get_selected_members',
+          // data: formData,
+          options: eos.Options(
+            headers: {
+              "accept": "application/json",
+              // "Content-Type": "multipart/form-data",
+              "Authorization": access_token.toString()
+            },
+          ));
+
+      //print(response.data.toString());
+      var data = jsonDecode(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (data["code"] == 0) {
+          //network or server error
+          print(data["message"]);
+
+          return [];
+        } else if (data["code"] == 1) {
+          print("posts retrieved");
+          return data["data"];
+        } else {
+          return [];
+        }
+      }
+    } catch (e) {
+      print("Error/Exception caught" + e.toString());
+      return "failed";
+    }
+    throw (e) {
+      print("Error/Exception thrown" + e.toString());
+      return "failed";
+    };
+  }
+
   Future<dynamic> get_all_prefs() async {
     //  String? access_token = user_data["access_token"];
     // print("access_token" + access_token.toString());

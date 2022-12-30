@@ -8,12 +8,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:roomnew/screens/landing.dart';
 import 'package:roomnew/screens/sentOTP.dart';
 import 'package:roomnew/screens/signup.dart';
+import 'package:roomnew/screens/user_follow.dart';
 import 'package:roomnew/services/auth.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key, required this.title});
+  const Login({super.key, required this.title, required this.from_signup});
 
   final String title;
+  final bool from_signup;
 
   @override
   State<Login> createState() => _LoginState();
@@ -112,9 +114,19 @@ class _LoginState extends State<Login> {
                                                             rootNavigator: true)
                                                         .pop(),
                                                     showToast("Hello, welcome"),
-                                                    Get.offAll(Landing(
-                                                        title:
-                                                            "Room8 Social - Home"))
+                                                    if (widget.from_signup ==
+                                                        false)
+                                                      {
+                                                        Get.offAll(Landing(
+                                                            title:
+                                                                "Room8 Social - Home"))
+                                                      }
+                                                    else
+                                                      {
+                                                        Get.offAll(User_follow(
+                                                            title:
+                                                                "Room8 Social - follow users"))
+                                                      }
                                                   }
                                                 else
                                                   {

@@ -17,11 +17,17 @@ import 'package:video_player/video_player.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import '../services/posts.dart';
 import 'landing.dart';
+import 'package:video_player/video_player.dart';
 
 class NewPost extends StatefulWidget {
-  const NewPost({super.key, required this.title});
+  const NewPost(
+      {super.key,
+      required this.selected_clip,
+      required this.selected_video,
+      required this.post_text,
+      required this.title});
 
-  final String title;
+  final String title, selected_clip, selected_video, post_text;
 
   @override
   State<NewPost> createState() => _NewPostState();
@@ -34,16 +40,48 @@ class _NewPostState extends State<NewPost> {
   TextEditingController post_controller = TextEditingController();
 
   List<File> selected_images = [];
+
+  List<File> selected_videos = [];
+
   var user_data = Hive.box("room8").get("user_data");
+  bool video_selected = false;
+  String? prev_selected_clip;
+
+  String? prev_selected_video;
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+   // String retrived_clip = Hive.box("room8").get("saved-clip");
+
+    if (widget.post_text != "" && widget.post_text != null) {
+      post_controller.text = widget.post_text;
+    }
+
+    prev_selected_clip = widget.selected_clip;
+    prev_selected_video = widget.selected_video;
+
+    if (prev_selected_clip != null && prev_selected_clip != "") {
+      //it means a video has been selected and trimmed. Set video selected to true to prevent selected images from displaying
+      setState(() {
+        video_selected = true;
+      });
+
+      //add selected video clip file path to array of selected videos
+      selected_videos.add(File(prev_selected_clip!));
+
+      //set video player controller
+      _controller = VideoPlayerController.file(File(prev_selected_clip!))
+        ..initialize().then((_) {
+          setState(() {}); //when your thumbnail will show.
+        });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -78,6 +116,12 @@ class _NewPostState extends State<NewPost> {
                       loading2("Loading", context);
 
                       if ((post_controller.text.isNotEmpty &&
+                              prev_selected_clip != null &&
+                              prev_selected_clip != "") ||
+                          (post_controller.text.isEmpty &&
+                              prev_selected_clip != null &&
+                              prev_selected_clip != "") ||
+                          (post_controller.text.isNotEmpty &&
                               selected_images.isEmpty) ||
                           (post_controller.text.isEmpty &&
                               selected_images.isNotEmpty) ||
@@ -85,7 +129,8 @@ class _NewPostState extends State<NewPost> {
                               selected_images.isNotEmpty)) {
                         Posts()
                             .post(
-                                media: selected_images,
+                                media: video_selected == true && selected_videos.length >0? selected_videos:selected_images,
+                                post_type: video_selected == true?"VIDEO":"IMAGE",
                                 text: post_controller.text.toString())
                             .then((value) => {
                                   if (value == 1)
@@ -195,6 +240,53 @@ class _NewPostState extends State<NewPost> {
                                           minLines: 10, // <-- SEE HERE
                                           maxLines: 20, // <-- SEE HERE
                                         ))),
+                                widget.selected_video != null &&
+                                        widget.selected_video != "" &&
+                                        selected_images.length == 0
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return TrimmerView(
+                                                File(widget.selected_video),
+                                                post_controller.text);
+                                          }));
+                                        },
+                                        child: Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            width: 280,
+                                            height: 200,
+                                            child: Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child:
+                                                      VideoPlayer(_controller!),
+                                                ),
+                                                ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    child: Container(
+                                                      child: Icon(
+                                                        Icons.play_arrow,
+                                                        size: 35,
+                                                        color: Colors.white,
+                                                      ),
+                                                      width: double.maxFinite,
+                                                      height: double.maxFinite,
+                                                      color: Color.fromARGB(
+                                                              255, 48, 48, 48)
+                                                          .withOpacity(0.4),
+                                                    )),
+                                              ],
+                                            )))
+                                    : SizedBox(),
                                 Container(
                                     height: 150,
                                     width: double.maxFinite,
@@ -280,13 +372,16 @@ class _NewPostState extends State<NewPost> {
                           ImagePicker picker = ImagePicker();
                           XFile? file = await picker.pickVideo(
                               source: ImageSource.gallery);
-                          if (file != null && file != null) {
-                            if (file != null) {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) {
-                                return TrimmerView(File(file.path));
-                              }));
-                            }
+                          if (file != null) {
+                            setState(() {
+                              video_selected = false;
+                              selected_videos.clear();
+                            });
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return TrimmerView(
+                                  File(file.path), post_controller.text);
+                            }));
                           }
                         },
                         icon: SvgPicture.asset(
@@ -307,8 +402,9 @@ class _NewPostState extends State<NewPost> {
 
 class TrimmerView extends StatefulWidget {
   final File file;
+  final String text_data;
 
-  TrimmerView(this.file);
+  TrimmerView(this.file, this.text_data);
 
   @override
   _TrimmerViewState createState() => _TrimmerViewState();
@@ -322,6 +418,7 @@ class _TrimmerViewState extends State<TrimmerView> {
   String? savedFile;
   bool _isPlaying = false;
   bool _progressVisibility = false;
+  String retrived_clip = "";
 
   Future<String?> _saveVideo() async {
     setState(() {
@@ -330,23 +427,15 @@ class _TrimmerViewState extends State<TrimmerView> {
 
     String? _value;
 
-    await _trimmer
-        .saveTrimmedVideo(
+    await _trimmer.saveTrimmedVideo(
       startValue: _startValue,
       endValue: _endValue,
       onSave: (outputPath) {
-        setState(() {
-          _progressVisibility = false;
-          _value = outputPath;
+        _value = outputPath;
 
-          savedFile = outputPath;
-          Hive.box("room8").put("saved-clip", outputPath);
-        });
+        Hive.box("room8").put("saved-clip", outputPath);
       },
-    )
-        .then((value) {
-      // _value = value;
-    });
+    );
 
     return _value;
   }
@@ -376,18 +465,20 @@ class _TrimmerViewState extends State<TrimmerView> {
           child: FloatingActionButton(
             onPressed: _progressVisibility
                 ? null
-                : () async {
+                : () {
                     _saveVideo().then((outputPath) {
-                      String retrived_clip =
-                          Hive.box("room8").get("saved-clip");
-                      print('OUTPUT PATHhhh: $retrived_clip');
-                      final snackBar =
-                          SnackBar(content: Text('Video Saved successfully'));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        snackBar,
-                      );
+                      setState(() {
+                        print('OUTPUT PATHhhh: $retrived_clip');
 
-                      Get.back();
+                        Future.delayed(const Duration(milliseconds: 2000), () {
+                          retrived_clip = Hive.box("room8").get("saved-clip");
+                          Get.to(NewPost(
+                              title: "New Post",
+                              selected_clip: retrived_clip,
+                              selected_video: widget.file.path,
+                              post_text: widget.text_data));
+                        });
+                      });
                     });
                   },
             backgroundColor: Color.fromARGB(255, 255, 255, 255),

@@ -124,8 +124,7 @@ class _NotificationsState extends State<Notifications> {
                                                     ? Get.to(Profile(
                                                         title:
                                                             "Room8 - Profile",
-                                                        id: notifications![
-                                                                index]
+                                                        id: notifications![index]
                                                             ["trigger_id"],
                                                         profile_img: notifications![
                                                                 index][
@@ -138,7 +137,10 @@ class _NotificationsState extends State<Notifications> {
                                                         username: notifications![
                                                                 index][
                                                             "trigger_username"],
-                                                        isFollowed: true))
+                                                        isFollowed:
+                                                            notifications![
+                                                                    index][
+                                                                "isFolllowed"]))
                                                     : Get.to(Comments(
                                                         post: notifications![
                                                                 index][
@@ -147,7 +149,10 @@ class _NotificationsState extends State<Notifications> {
                                                             notifications![
                                                                     index]
                                                                 ["comment_id"],
-                                                        isFollowed: true,
+                                                        isFollowed:
+                                                            notifications![
+                                                                    index]
+                                                                ["isFollowed"],
                                                         notif_id:
                                                             notifications![
                                                                 index]["id"],
@@ -324,10 +329,12 @@ class _NotificationsState extends State<Notifications> {
                                     return Container(
                                         child: Center(
                                             child: Text(
-                                      "No notifications yet! They will appear here when people interracting with you.",
+                                      "No notifications yet! They will appear here when people start interracting with you.",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 17,
+                                          color:
+                                              Color.fromARGB(255, 34, 34, 34),
                                           fontWeight: FontWeight.w400),
                                     )));
                                   }

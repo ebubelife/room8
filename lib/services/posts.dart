@@ -97,8 +97,8 @@ class Posts {
           Hive.box("room8").put("user_data_for_profile_inview",
               data["user_data_for_profile_inview"]);
 
-              //only user data received
-           
+          //only user data received
+
           return [];
         } else {
           return [];
@@ -114,14 +114,25 @@ class Posts {
     };
   }
 
-  Future<dynamic> post({List<File>? media, String? text}) async {
+  Future<dynamic> post(
+      {List<File>? media, String? text, String? post_type}) async {
     String? access_token = user_data["access_token"];
     var dio = eos.Dio();
-    String? post_type;
+    String? request_post_type;
+
+    if (post_type == "IMAGE" && media!.isNotEmpty) {
+      request_post_type = "IMAGE";
+    }
+    else if(post_type == "VIDEO" && media!.isNotEmpty){
+      request_post_type = "VIDEO";
+    }
+    else if(media!.isNotEmpty){
+      request_post_type = "TEXT";
+    }
 
     var formData = eos.FormData.fromMap({
       'text': text ?? text,
-      'post_type': media!.isEmpty ? "TEXT" : "IMAGE",
+      'post_type': request_post_type,
     });
 
     //set post type based on length of images

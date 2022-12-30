@@ -253,10 +253,18 @@ class _SignupState extends State<Signup> {
                                 child: CoolDropdown(
                                   dropdownList: preferences,
 
+                                  placeholderTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
+                                  selectedItemTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 27, 27, 27)),
                                   unselectedItemTS: TextStyle(
                                       fontSize: 13,
                                       color: Color.fromARGB(255, 68, 68, 68)),
-                                  resultTS: TextStyle(fontSize: 15),
+                                  resultTS: TextStyle(
+                                      fontSize: 15,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
 
                                   //resultWidth: double.maxFinite,
                                   onChange: (value) {
@@ -264,6 +272,7 @@ class _SignupState extends State<Signup> {
                                       sel_preference = value["value"];
                                     });
                                   },
+
                                   defaultValue: preferences[0],
                                   // placeholder: 'insert...',
                                 ),
@@ -290,7 +299,13 @@ class _SignupState extends State<Signup> {
                                   unselectedItemTS: TextStyle(
                                       fontSize: 13,
                                       color: Color.fromARGB(255, 68, 68, 68)),
-                                  resultTS: TextStyle(fontSize: 15),
+
+                                  selectedItemTS: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
+                                  resultTS: TextStyle(
+                                      fontSize: 15,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
 
                                   //resultWidth: double.maxFinite,
                                   onChange: (value) {
@@ -324,7 +339,9 @@ class _SignupState extends State<Signup> {
                                   unselectedItemTS: TextStyle(
                                       fontSize: 13,
                                       color: Color.fromARGB(255, 68, 68, 68)),
-                                  resultTS: TextStyle(fontSize: 15),
+                                  resultTS: TextStyle(
+                                      fontSize: 15,
+                                      color: Color.fromARGB(255, 68, 68, 68)),
 
                                   //resultWidth: double.maxFinite,
                                   onChange: (value) {
@@ -365,7 +382,10 @@ class _SignupState extends State<Signup> {
                                             fontSize: 13,
                                             color: Color.fromARGB(
                                                 255, 68, 68, 68)),
-                                        resultTS: TextStyle(fontSize: 15),
+                                        resultTS: TextStyle(
+                                            fontSize: 15,
+                                            color: Color.fromARGB(
+                                                255, 68, 68, 68)),
 
                                         //resultWidth: double.maxFinite,
                                         onChange: (value) {
@@ -457,7 +477,7 @@ class _SignupState extends State<Signup> {
                                         loading2("Loading", context);
                                         Auth()
                                             .signup(
-                                              state: sel_state,
+                                                state: sel_state,
                                                 country: sel_countery,
                                                 gender: sel_gender,
                                                 prefs: sel_preference,
@@ -479,7 +499,7 @@ class _SignupState extends State<Signup> {
                                                           "Your account was created successfully"),
                                                       Get.to(Login(
                                                           title:
-                                                              "Room8 - Login"))
+                                                              "Room8 - Login",from_signup:true))
                                                     }
                                                   else
                                                     {
@@ -604,7 +624,7 @@ class _SignupState extends State<Signup> {
                               GestureDetector(
                                   onTap: () {
                                     Get.to(
-                                        Login(title: "Welcome Back - Room8"));
+                                        Login(title: "Welcome Back - Room8",from_signup: false,));
                                   },
                                   child: Center(
                                       child: Container(

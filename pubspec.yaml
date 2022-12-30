@@ -35,7 +35,6 @@ dependencies:
   carousel_slider: ^4.1.1
   dots_indicator: ^2.1.0
   flutter_svg: ^0.23.0+1
-  video_player: ^2.2.7
   video_thumbnail: ^0.5.3
   timeago: ^3.1.0
   cached_network_image: ^3.1.0
@@ -50,6 +49,8 @@ dependencies:
   cool_dropdown: ^1.4.2
   flutter_local_notifications: ^9.1.4
   video_trimmer: ^2.0.1
+  video_player: ^2.4.10
+  visibility_detector: ^0.3.3
 
 
   # The following adds the Cupertino Icons font to your application.

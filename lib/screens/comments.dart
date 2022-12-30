@@ -280,17 +280,39 @@ class _CommentsState extends State<Comments> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              Text(
-                                                                comments[index][
-                                                                        "creator_details"]
-                                                                    [
-                                                                    "username"],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    comments[index]
+                                                                            [
+                                                                            "creator_details"]
+                                                                        [
+                                                                        "username"],
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Container(
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                        left:
+                                                                            10,
+                                                                      ),
+                                                                      child:
+                                                                          Text(
+                                                                        TimeFormatter().readTimestamp(int.parse(comments[index]
+                                                                            [
+                                                                            "time"])),
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.grey),
+                                                                      ))
+                                                                ],
                                                               ),
                                                               SizedBox(
                                                                   height: 4),
@@ -305,21 +327,6 @@ class _CommentsState extends State<Comments> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    left: 10,
-                                                                    bottom: 10),
-                                                            child: Text(
-                                                              TimeFormatter().readTimestamp(
-                                                                  int.parse(comments[
-                                                                          index]
-                                                                      [
-                                                                      "time"])),
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ))
                                                       ],
                                                     )
                                                   ])
@@ -351,6 +358,7 @@ class _CommentsState extends State<Comments> {
                           // Note: Same code is applied for the TextFormField as well
                           TextField(
                         cursorHeight: 20,
+                        style: TextStyle(color: Colors.black),
                         controller: comment_controller,
                         maxLines: 4,
                         minLines: 1,

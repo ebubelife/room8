@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:roomnew/screens/notifications.dart';
 import 'package:roomnew/screens/profile.dart';
 import 'package:roomnew/screens/search.dart';
+import 'package:roomnew/screens/user_follow.dart';
 import 'package:roomnew/services/others.dart';
 import '../components/loading.dart';
 import '../components/post.dart';
@@ -173,9 +174,7 @@ class _MainHomeState extends State<MainHome>
                                 GestureDetector(
                                   child: Stack(
                                     children: [
-                                      Image.asset(
-                                        "assets/images/bell1.png",
-                                      ),
+                                      Icon(Icons.notifications_outlined),
                                       containsStatusRead == true
                                           ? Container(
                                               height: 10,
@@ -197,26 +196,23 @@ class _MainHomeState extends State<MainHome>
                                   }),
                                 ),
                                 SizedBox(
-                                  width: 21,
+                                  width: 16,
                                 ),
                                 GestureDetector(
-                                    onTap: (() {
-                                      Get.to(
-                                        Search(
-                                          title: "Room8 - Search",
-                                        ),
-                                      );
-                                    }),
-                                    child: Image.asset(
-                                      "assets/images/magnifying-glass1.png",
-                                    )),
+                                  onTap: (() {
+                                    Get.to(
+                                      Search(
+                                        title: "Room8 - Search",
+                                      ),
+                                    );
+                                  }),
+                                  child: Icon(Icons.search),
+                                ),
                                 SizedBox(
-                                  width: 21,
+                                  width: 16,
                                 ),
                                 GestureDetector(
-                                  child: Image.asset(
-                                    "assets/images/profile1.png",
-                                  ),
+                                  child: Icon(Icons.account_circle),
                                   onTap: (() {
                                     Get.to(
                                       Profile(
@@ -448,6 +444,7 @@ class _MainHomeState extends State<MainHome>
       notifs = user_data = Hive.box("room8").get("all_notifs");
 
       containsStatusRead = notifs.any((map) => map["status"] == "UNREAD");
+      print("ronaldo " + notifs.toString());
     });
 
     return notifications;
